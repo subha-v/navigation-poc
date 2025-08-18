@@ -10,7 +10,10 @@
       "Bash(./build_with_mcp.sh:*)",
       "Bash(xcodebuild:*)",
       "Bash(xcrun simctl list:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": [],

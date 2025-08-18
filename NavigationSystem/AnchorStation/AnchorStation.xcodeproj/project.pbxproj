@@ -11,6 +11,10 @@
 		A1B2C3D61234567890ABCDEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D51234567890ABCDEF /* ContentView.swift */; };
 		A1B2C3D81234567890ABCDEF /* AnchorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D71234567890ABCDEF /* AnchorManager.swift */; };
 		A1B2C3DA1234567890ABCDEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D91234567890ABCDEF /* Assets.xcassets */; };
+		B1B2C3D41234567890ABCDEF /* ModeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D31234567890ABCDEF /* ModeSelectionView.swift */; };
+		B1B2C3D61234567890ABCDEF /* AnchorModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D51234567890ABCDEF /* AnchorModeView.swift */; };
+		B1B2C3D81234567890ABCDEF /* NavigationModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D71234567890ABCDEF /* NavigationModeView.swift */; };
+		B1B2C3DA1234567890ABCDEF /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D91234567890ABCDEF /* NavigationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +24,10 @@
 		A1B2C3D71234567890ABCDEF /* AnchorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorManager.swift; sourceTree = "<group>"; };
 		A1B2C3D91234567890ABCDEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1B2C3DB1234567890ABCDEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1B2C3D31234567890ABCDEF /* ModeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelectionView.swift; sourceTree = "<group>"; };
+		B1B2C3D51234567890ABCDEF /* AnchorModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorModeView.swift; sourceTree = "<group>"; };
+		B1B2C3D71234567890ABCDEF /* NavigationModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationModeView.swift; sourceTree = "<group>"; };
+		B1B2C3D91234567890ABCDEF /* NavigationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +62,11 @@
 			children = (
 				A1B2C3D31234567890ABCDEF /* AnchorApp.swift */,
 				A1B2C3D51234567890ABCDEF /* ContentView.swift */,
+				B1B2C3D31234567890ABCDEF /* ModeSelectionView.swift */,
+				B1B2C3D51234567890ABCDEF /* AnchorModeView.swift */,
+				B1B2C3D71234567890ABCDEF /* NavigationModeView.swift */,
 				A1B2C3D71234567890ABCDEF /* AnchorManager.swift */,
+				B1B2C3D91234567890ABCDEF /* NavigationManager.swift */,
 				A1B2C3D91234567890ABCDEF /* Assets.xcassets */,
 				A1B2C3DB1234567890ABCDEF /* Info.plist */,
 			);
@@ -133,6 +145,10 @@
 				A1B2C3D61234567890ABCDEF /* ContentView.swift in Sources */,
 				A1B2C3D41234567890ABCDEF /* AnchorApp.swift in Sources */,
 				A1B2C3D81234567890ABCDEF /* AnchorManager.swift in Sources */,
+				B1B2C3D41234567890ABCDEF /* ModeSelectionView.swift in Sources */,
+				B1B2C3D61234567890ABCDEF /* AnchorModeView.swift in Sources */,
+				B1B2C3D81234567890ABCDEF /* NavigationModeView.swift in Sources */,
+				B1B2C3DA1234567890ABCDEF /* NavigationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
