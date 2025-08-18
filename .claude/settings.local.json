@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python:*)",
       "Bash(cd:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(git commit -m \"Initial commit: Indoor Navigation PoC with E57 to Nav2 converter and iOS apps using Nearby Interaction\n\n- E57 to occupancy grid converter (PDAL and pye57 versions)\n- Anchor placement tool for positioning base stations\n- iOS Anchor app for UWB broadcasting stations\n- iOS Navigator app with ARKit + Nearby Interaction fusion\n- A* pathfinding on occupancy grids\n- Complete documentation and setup guides\")"
     ],
     "deny": [],
     "ask": []
