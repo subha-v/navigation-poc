@@ -7,6 +7,7 @@ import Foundation
 import NearbyInteraction
 import MultipeerConnectivity
 import Combine
+import CoreGraphics
 
 class AnchorManager: NSObject, ObservableObject {
     // Published properties for UI
@@ -73,7 +74,7 @@ class AnchorManager: NSObject, ObservableObject {
         niSession?.delegate = self
         
         // Generate discovery token for sharing
-        guard let token = niSession?.discoveryToken else {
+        guard niSession?.discoveryToken != nil else {
             print("Failed to create discovery token")
             return
         }
@@ -93,8 +94,8 @@ class AnchorManager: NSObject, ObservableObject {
         // Start advertising
         let discoveryInfo: [String: String] = [
             "anchorID": anchorID,
-            "x": String(position.x),
-            "y": String(position.y)
+            "x": String(describing: position.x),
+            "y": String(describing: position.y)
         ]
         
         mcAdvertiser = MCNearbyServiceAdvertiser(peer: peerID,
