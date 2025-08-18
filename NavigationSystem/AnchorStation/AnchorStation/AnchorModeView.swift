@@ -72,7 +72,6 @@ struct AnchorModeView: View {
                     Image(systemName: "antenna.radiowaves.left.and.right")
                         .font(.system(size: 80))
                         .foregroundColor(.blue)
-                        .symbolEffect(.pulse)
                     
                     Text("Broadcasting as")
                         .font(.headline)
