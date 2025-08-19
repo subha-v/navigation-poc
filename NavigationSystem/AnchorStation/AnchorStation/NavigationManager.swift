@@ -11,13 +11,16 @@ import CoreGraphics
 import UIKit
 
 class NavigationManager: NSObject, ObservableObject {
+    @Published var currentPosition: CGPoint?
     @Published var currentDistance: Float?
     @Published var currentDirection: Float?
     @Published var isConnected = false
     @Published var targetDestination: String?
+    @Published var connectedAnchorsCount: Int = 0
+    @Published var navigationConfidence: Float = 0.0
     
-    // Nearby Interaction
-    private var niSession: NISession?
+    // Nearby Interaction - multiple sessions for multiple anchors
+    private var niSessions: [String: NISession] = [:]
     private var currentToken: NIDiscoveryToken?
     
     // Multipeer Connectivity
@@ -28,24 +31,32 @@ class NavigationManager: NSObject, ObservableObject {
     // Navigation state
     private var connectedAnchors: [String: NIDiscoveryToken] = [:]
     private var anchorPositions: [String: CGPoint] = [:]
+    private var anchorMeasurements: [String: (distance: Float, direction: simd_float3?)] = [:]
+    
+    // Trilateration
+    private let trilaterationEngine = TrilaterationEngine()
+    private let anchorConfig = AnchorConfiguration.shared
     
     override init() {
         super.init()
     }
     
-    func startNavigation(to destination: String) {
+    func startNavigation(to destination: String? = nil) {
         targetDestination = destination
         
-        // Setup Nearby Interaction
+        // Setup main Nearby Interaction session for token generation
         setupNearbyInteraction()
         
-        // Start browsing for anchors
+        // Start browsing for all anchors
         setupMultipeerBrowsing()
     }
     
     func stop() {
-        niSession?.invalidate()
-        niSession = nil
+        // Invalidate all NI sessions
+        for (_, session) in niSessions {
+            session.invalidate()
+        }
+        niSessions.removeAll()
         
         mcBrowser?.stopBrowsingForPeers()
         mcBrowser = nil
@@ -54,11 +65,16 @@ class NavigationManager: NSObject, ObservableObject {
         mcSession = nil
         
         isConnected = false
+        currentPosition = nil
         currentDistance = nil
         currentDirection = nil
         targetDestination = nil
         connectedAnchors.removeAll()
         anchorPositions.removeAll()
+        anchorMeasurements.removeAll()
+        trilaterationEngine.reset()
+        connectedAnchorsCount = 0
+        navigationConfidence = 0.0
     }
     
     private func setupNearbyInteraction() {
@@ -67,11 +83,11 @@ class NavigationManager: NSObject, ObservableObject {
             return
         }
         
-        niSession = NISession()
-        niSession?.delegate = self
-        currentToken = niSession?.discoveryToken
+        // Create a main session just for token generation
+        let mainSession = NISession()
+        currentToken = mainSession.discoveryToken
         
-        print("Navigation NI Session created")
+        print("Navigation NI token created")
     }
     
     private func setupMultipeerBrowsing() {
@@ -111,13 +127,23 @@ class NavigationManager: NSObject, ObservableObject {
                 return
             }
             
-            connectedAnchors[peerID.displayName] = token
+            let anchorID = peerID.displayName
+            connectedAnchors[anchorID] = token
             
-            // If this is our target destination, start NI session with it
-            if peerID.displayName == targetDestination {
-                let config = NINearbyPeerConfiguration(peerToken: token)
-                niSession?.run(config)
-                print("Started NI session with target: \(peerID.displayName)")
+            // Create a dedicated NI session for this anchor
+            let session = NISession()
+            session.delegate = self
+            niSessions[anchorID] = session
+            
+            // Start ranging with this anchor
+            let config = NINearbyPeerConfiguration(peerToken: token)
+            session.run(config)
+            
+            print("Started NI session with anchor: \(anchorID)")
+            
+            DispatchQueue.main.async {
+                self.connectedAnchorsCount = self.connectedAnchors.count
+                self.isConnected = self.connectedAnchorsCount > 0
             }
         } catch {
             print("Failed to receive token: \(error)")
@@ -130,26 +156,69 @@ extension NavigationManager: NISessionDelegate {
     func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
         guard let object = nearbyObjects.first else { return }
         
-        DispatchQueue.main.async {
-            self.currentDistance = object.distance
-            
-            if let direction = object.direction {
-                // Calculate angle for arrow rotation
-                let angle = atan2(direction.x, direction.z)
-                self.currentDirection = angle
+        // Find which anchor this session belongs to
+        var anchorID: String?
+        for (id, niSession) in niSessions {
+            if niSession === session {
+                anchorID = id
+                break
             }
+        }
+        
+        guard let anchor = anchorID,
+              let anchorData = anchorConfig.getAnchor(byId: anchor) else { return }
+        
+        // Update measurement for this anchor
+        if let distance = object.distance {
+            anchorMeasurements[anchor] = (distance, object.direction)
             
-            self.isConnected = true
+            // Update trilateration engine
+            trilaterationEngine.updateMeasurement(
+                anchorId: anchor,
+                position: anchorData.position,
+                distance: distance,
+                direction: object.direction
+            )
+        }
+        
+        // Calculate position using trilateration
+        if let calculatedPosition = trilaterationEngine.calculatePosition() {
+            DispatchQueue.main.async {
+                self.currentPosition = calculatedPosition
+                self.navigationConfidence = self.trilaterationEngine.getConfidenceLevel()
+                
+                // If we have a target, calculate distance and direction to it
+                if let targetName = self.targetDestination,
+                   let targetPOI = self.anchorConfig.getPOI(byName: targetName) {
+                    let dx = targetPOI.position.x - calculatedPosition.x
+                    let dy = targetPOI.position.y - calculatedPosition.y
+                    self.currentDistance = Float(sqrt(dx * dx + dy * dy))
+                    self.currentDirection = Float(atan2(dy, dx))
+                }
+            }
         }
     }
     
     func session(_ session: NISession, didRemove nearbyObjects: [NINearbyObject], reason: NINearbyObject.RemovalReason) {
-        DispatchQueue.main.async {
-            self.currentDistance = nil
-            self.currentDirection = nil
+        // Find which anchor this session belongs to
+        var anchorID: String?
+        for (id, niSession) in niSessions {
+            if niSession === session {
+                anchorID = id
+                break
+            }
+        }
+        
+        if let anchor = anchorID {
+            anchorMeasurements.removeValue(forKey: anchor)
             
-            if reason == .timeout {
-                self.isConnected = false
+            DispatchQueue.main.async {
+                if self.anchorMeasurements.isEmpty {
+                    self.currentPosition = nil
+                    self.currentDistance = nil
+                    self.currentDirection = nil
+                }
+                self.navigationConfidence = self.trilaterationEngine.getConfidenceLevel()
             }
         }
     }
@@ -216,9 +285,11 @@ extension NavigationManager: MCNearbyServiceBrowserDelegate {
             anchorPositions[peerID.displayName] = CGPoint(x: x, y: y)
         }
         
-        // Invite the peer if it's our target
-        if peerID.displayName == targetDestination {
+        // Connect to all available anchors for trilateration
+        // Only connect if it's one of our configured anchors
+        if anchorConfig.getAnchor(byId: peerID.displayName) != nil {
             browser.invitePeer(peerID, to: mcSession!, withContext: nil, timeout: 30)
+            print("Inviting anchor: \(peerID.displayName)")
         }
     }
     

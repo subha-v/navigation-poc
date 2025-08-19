@@ -8,16 +8,12 @@ import SwiftUI
 struct AnchorModeView: View {
     @StateObject private var anchorManager = AnchorManager()
     @State private var selectedAnchorID = ""
+    @State private var selectedAnchorData: AnchorData?
     @State private var isRunning = false
     @Binding var selectedMode: AppMode?
     
-    // Predefined anchor positions (can be configured elsewhere)
-    let predefinedAnchors = [
-        ("Kitchen", CGPoint(x: 0, y: 0)),
-        ("Living Room", CGPoint(x: 5, y: 0)),
-        ("Bedroom", CGPoint(x: 5, y: 5)),
-        ("Bathroom", CGPoint(x: 0, y: 5))
-    ]
+    // Get anchor positions from configuration
+    let anchorConfig = AnchorConfiguration.shared
     
     var body: some View {
         VStack(spacing: 30) {
@@ -43,18 +39,24 @@ struct AnchorModeView: View {
             if !isRunning {
                 // Anchor selection
                 VStack(spacing: 20) {
-                    Text("Select Anchor Location")
+                    Text("Select Anchor Station")
                         .font(.headline)
                     
-                    ForEach(predefinedAnchors, id: \.0) { anchor in
+                    ForEach(anchorConfig.anchors, id: \.id) { anchor in
                         Button(action: {
-                            selectedAnchorID = anchor.0
-                            startAnchor(id: anchor.0, position: anchor.1)
+                            selectedAnchorID = anchor.id
+                            selectedAnchorData = anchor
+                            startAnchor(anchorData: anchor)
                         }) {
                             HStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right")
-                                Text(anchor.0)
-                                    .font(.title3)
+                                VStack(alignment: .leading) {
+                                    Text(anchor.displayName)
+                                        .font(.title3)
+                                    Text("Position: (\(String(format: "%.1f", anchor.position.x)), \(String(format: "%.1f", anchor.position.y)))")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
                                 Spacer()
                                 Image(systemName: "chevron.right")
                             }
@@ -77,9 +79,15 @@ struct AnchorModeView: View {
                         .font(.headline)
                         .foregroundColor(.secondary)
                     
-                    Text(selectedAnchorID)
+                    Text(selectedAnchorData?.displayName ?? selectedAnchorID)
                         .font(.largeTitle)
                         .fontWeight(.bold)
+                    
+                    if let position = selectedAnchorData?.position {
+                        Text("Position: (\(String(format: "%.1f", position.x)), \(String(format: "%.1f", position.y)))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                     
                     if let connectedPeer = anchorManager.connectedPeer {
                         Text("Connected: \(connectedPeer)")
@@ -106,8 +114,8 @@ struct AnchorModeView: View {
         }
     }
     
-    private func startAnchor(id: String, position: CGPoint) {
-        anchorManager.start(anchorID: id, position: position)
+    private func startAnchor(anchorData: AnchorData) {
+        anchorManager.start(anchorID: anchorData.id, position: anchorData.position)
         isRunning = true
     }
 }

@@ -1,0 +1,26 @@
+map:
+  image: floor_plan.png
+  resolution: 0.02
+  origin:
+  - -3.105749002952031
+  - -12.173754068764943
+  - 0.0
+  occupied_thresh: 0.65
+  free_thresh: 0.196
+  negate: 0
+dimensions:
+  width_meters: 7.6870727894492195
+  height_meters: 23.68750604500052
+  width_pixels: 384
+  height_pixels: 1184
+pathfinding:
+  algorithm: A*
+  allow_diagonal: true
+  heuristic: euclidean
+  obstacle_threshold: 128
+  safety_margin_cm: 10
+coordinate_system:
+  unit: meters
+  origin_description: Bottom-left corner of the map
+  x_axis: East
+  y_axis: North
