@@ -1,0 +1,37 @@
+{
+  "entrance": {
+    "x": 2.85,
+    "y": 1.0,
+    "description": "Main entrance"
+  },
+  "reception": {
+    "x": 2.85,
+    "y": 2.0,
+    "description": "Reception area"
+  },
+  "desk_1": {
+    "x": 1.5,
+    "y": 4.0,
+    "description": "Desk area 1"
+  },
+  "desk_2": {
+    "x": 4.2,
+    "y": 4.0,
+    "description": "Desk area 2"
+  },
+  "hallway_upper": {
+    "x": 2.85,
+    "y": 5.0,
+    "description": "Upper hallway"
+  },
+  "hallway_middle": {
+    "x": 2.85,
+    "y": 12.0,
+    "description": "Middle hallway"
+  },
+  "hallway_lower": {
+    "x": 2.85,
+    "y": 18.0,
+    "description": "Lower hallway"
+  }
+}

@@ -1,0 +1,24 @@
+image: VNX_BW_Floorplan_Updated.PNG
+resolution: 0.005  # 5mm per pixel (5.71m width / 1140 pixels)
+origin: [0.0, 0.0, 0.0]  # Bottom-left corner as origin
+negate: 0  # White pixels are free space (0), black pixels are occupied (1)
+occupied_thresh: 0.65  # Threshold for considering a pixel as occupied
+free_thresh: 0.196  # Threshold for considering a pixel as free
+
+# Real-world dimensions
+width_meters: 5.71
+height_meters: 23.19  # Calculated from aspect ratio (4638/1140 * 5.71)
+
+# Image dimensions
+image_width: 1140
+image_height: 4638
+
+# Navigation parameters for A* algorithm
+robot_radius: 0.2  # 20cm radius for clearance
+inflation_radius: 0.3  # Additional 10cm safety margin
+cost_scaling_factor: 10.0
+
+# Path planning parameters
+allow_diagonal: true
+diagonal_cost: 1.414  # sqrt(2) for diagonal movement
+straight_cost: 1.0

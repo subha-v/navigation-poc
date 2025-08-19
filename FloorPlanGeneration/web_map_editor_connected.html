@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALUENEX Office Map Editor - A* Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .sidebar-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .map-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .map-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .coordinate-display {
+            background: #495057;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            overflow: auto;
+            position: relative;
+            background: #f0f0f0;
+        }
+        
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .mode-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .location-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 5px;
+        }
+        
+        .location-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .location-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .location-item.selected {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border: 1px solid #667eea;
+        }
+        
+        .location-info {
+            flex: 1;
+        }
+        
+        .location-name {
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .location-coords {
+            font-size: 12px;
+            color: #6c757d;
+            font-family: monospace;
+        }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin: 5px 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .select-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 8px 0;
+            background: white;
+        }
+        
+        .path-info {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border: 1px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .path-info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .path-stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .path-stat-label {
+            color: #6c757d;
+        }
+        
+        .path-stat-value {
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .status-bar {
+            background: #212529;
+            color: white;
+            padding: 12px 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗺️ VALUENEX Office Navigation System</h1>
+        <p>Interactive A* Pathfinding Map Editor</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="panel sidebar">
+            <div class="sidebar-header">
+                Control Panel
+            </div>
+            <div class="sidebar-content">
+                <div class="mode-buttons">
+                    <div class="mode-btn active" data-mode="add">
+                        📍 Add
+                    </div>
+                    <div class="mode-btn" data-mode="navigate">
+                        🧭 Navigate
+                    </div>
+                    <div class="mode-btn" data-mode="view">
+                        👁️ View
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">
+                        📍 Saved Locations
+                    </div>
+                    <div class="location-list" id="location-list"></div>
+                </div>
+                
+                <div class="section">
+                    <button class="btn" onclick="saveToServer()">💾 Save to Server</button>
+                    <button class="btn secondary" onclick="loadFromServer()">🔄 Load from Server</button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">
+                        🚀 Navigation
+                    </div>
+                    <select class="select-input" id="from-select">
+                        <option value="">Select start location...</option>
+                    </select>
+                    <select class="select-input" id="to-select">
+                        <option value="">Select destination...</option>
+                    </select>
+                    <button class="btn" onclick="findPath()">Calculate Path</button>
+                    <button class="btn secondary" onclick="clearPath()">Clear Path</button>
+                    
+                    <div id="path-info" class="path-info" style="display: none;">
+                        <h3>📊 Path Information</h3>
+                        <div class="path-stat">
+                            <span class="path-stat-label">Distance:</span>
+                            <span class="path-stat-value" id="path-distance">-</span>
+                        </div>
+                        <div class="path-stat">
+                            <span class="path-stat-label">Waypoints:</span>
+                            <span class="path-stat-value" id="path-waypoints">-</span>
+                        </div>
+                        <div class="path-stat">
+                            <span class="path-stat-label">Status:</span>
+                            <span class="path-stat-value" id="path-status">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel map-panel">
+            <div class="map-header">
+                <div>Floor Plan View</div>
+                <div class="coordinate-display" id="coordinate-display">
+                    X: 0.00m, Y: 0.00m
+                </div>
+            </div>
+            <div class="canvas-container" id="canvas-container">
+                <canvas id="map-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-bar">
+        <div class="status-indicator"></div>
+        <span id="status-text">System Ready</span>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000';
+        const canvas = document.getElementById('map-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let locations = {};
+        let selectedLocation = null;
+        let currentPath = null;
+        let mapImage = null;
+        let mode = 'add';
+        let mapInfo = null;
+        
+        // Initialize
+        async function init() {
+            // Load map info from server
+            try {
+                const response = await fetch(`${API_URL}/api/map_info`);
+                mapInfo = await response.json();
+                updateStatus('Connected to server');
+            } catch (error) {
+                console.error('Server connection failed:', error);
+                updateStatus('Running in offline mode');
+                mapInfo = {
+                    resolution: 0.005,
+                    width_meters: 5.71,
+                    height_meters: 23.19
+                };
+            }
+            
+            // Load map image
+            const img = new Image();
+            img.onload = function() {
+                mapImage = img;
+                canvas.width = img.width;
+                canvas.height = img.height;
+                redrawCanvas();
+                loadFromServer();
+            };
+            img.src = 'VNX_BW_Floorplan_Updated.PNG';
+        }
+        
+        // Mode selection
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                mode = btn.dataset.mode;
+                updateCursor();
+                updateStatus(`Mode: ${mode}`);
+            });
+        });
+        
+        function updateCursor() {
+            if (mode === 'add') {
+                canvas.style.cursor = 'crosshair';
+            } else if (mode === 'navigate') {
+                canvas.style.cursor = 'pointer';
+            } else {
+                canvas.style.cursor = 'default';
+            }
+        }
+        
+        // Canvas events
+        canvas.addEventListener('click', async (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            if (mode === 'add') {
+                await addLocation(x, y);
+            } else if (mode === 'navigate') {
+                selectNearestLocation(x, y);
+            }
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            const xMeters = (x * mapInfo.resolution).toFixed(2);
+            const yMeters = (y * mapInfo.resolution).toFixed(2);
+            
+            document.getElementById('coordinate-display').textContent = 
+                `X: ${xMeters}m, Y: ${yMeters}m`;
+        });
+        
+        async function addLocation(x, y) {
+            const name = prompt('Enter location name (e.g., "kitchen", "desk_1"):');
+            if (!name) return;
+            
+            const xMeters = x * mapInfo.resolution;
+            const yMeters = y * mapInfo.resolution;
+            
+            // Validate position with server if available
+            try {
+                const response = await fetch(`${API_URL}/api/validate_position`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({x: xMeters, y: yMeters})
+                });
+                const result = await response.json();
+                
+                if (!result.valid) {
+                    alert('This position is occupied or too close to obstacles!');
+                    return;
+                }
+            } catch (error) {
+                console.log('Server validation unavailable, adding anyway');
+            }
+            
+            if (locations[name]) {
+                if (!confirm(`Location "${name}" already exists. Overwrite?`)) {
+                    return;
+                }
+            }
+            
+            locations[name] = {
+                x: parseFloat(xMeters.toFixed(2)),
+                y: parseFloat(yMeters.toFixed(2)),
+                description: `Added via web editor`
+            };
+            
+            updateLocationList();
+            redrawCanvas();
+            updateStatus(`Added location: ${name}`);
+        }
+        
+        function deleteLocation(name) {
+            if (confirm(`Delete location "${name}"?`)) {
+                delete locations[name];
+                updateLocationList();
+                redrawCanvas();
+                updateStatus(`Deleted: ${name}`);
+            }
+        }
+        
+        function updateLocationList() {
+            const list = document.getElementById('location-list');
+            const fromSelect = document.getElementById('from-select');
+            const toSelect = document.getElementById('to-select');
+            
+            list.innerHTML = '';
+            fromSelect.innerHTML = '<option value="">Select start location...</option>';
+            toSelect.innerHTML = '<option value="">Select destination...</option>';
+            
+            Object.keys(locations).sort().forEach(name => {
+                const loc = locations[name];
+                
+                // List item
+                const item = document.createElement('div');
+                item.className = 'location-item';
+                item.innerHTML = `
+                    <div class="location-info">
+                        <div class="location-name">${name}</div>
+                        <div class="location-coords">${loc.x}m, ${loc.y}m</div>
+                    </div>
+                    <button class="delete-btn" onclick="event.stopPropagation(); deleteLocation('${name}')">Delete</button>
+                `;
+                item.onclick = () => selectLocation(name);
+                list.appendChild(item);
+                
+                // Select options
+                const option1 = document.createElement('option');
+                option1.value = name;
+                option1.textContent = name;
+                fromSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = name;
+                option2.textContent = name;
+                toSelect.appendChild(option2);
+            });
+        }
+        
+        function selectLocation(name) {
+            selectedLocation = name;
+            document.querySelectorAll('.location-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelectorAll('.location-item').forEach(item => {
+                if (item.querySelector('.location-name').textContent === name) {
+                    item.classList.add('selected');
+                }
+            });
+            redrawCanvas();
+        }
+        
+        function selectNearestLocation(x, y) {
+            let nearest = null;
+            let minDist = Infinity;
+            
+            Object.entries(locations).forEach(([name, loc]) => {
+                const locX = loc.x / mapInfo.resolution;
+                const locY = loc.y / mapInfo.resolution;
+                const dist = Math.sqrt((x - locX) ** 2 + (y - locY) ** 2);
+                
+                if (dist < minDist && dist < 30) {
+                    minDist = dist;
+                    nearest = name;
+                }
+            });
+            
+            if (nearest) {
+                const fromSelect = document.getElementById('from-select');
+                const toSelect = document.getElementById('to-select');
+                
+                if (!fromSelect.value) {
+                    fromSelect.value = nearest;
+                    updateStatus(`Start: ${nearest}`);
+                } else if (!toSelect.value) {
+                    toSelect.value = nearest;
+                    updateStatus(`Destination: ${nearest}`);
+                }
+            }
+        }
+        
+        function redrawCanvas() {
+            if (!mapImage) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(mapImage, 0, 0);
+            
+            // Draw path
+            if (currentPath && currentPath.length > 1) {
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(currentPath[0][0], currentPath[0][1]);
+                for (let i = 1; i < currentPath.length; i++) {
+                    ctx.lineTo(currentPath[i][0], currentPath[i][1]);
+                }
+                ctx.stroke();
+                
+                // Draw start and end markers
+                ctx.fillStyle = '#28a745';
+                ctx.beginPath();
+                ctx.arc(currentPath[0][0], currentPath[0][1], 8, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.fillStyle = '#dc3545';
+                ctx.beginPath();
+                ctx.arc(currentPath[currentPath.length-1][0], currentPath[currentPath.length-1][1], 8, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            // Draw locations
+            Object.entries(locations).forEach(([name, loc]) => {
+                const x = loc.x / mapInfo.resolution;
+                const y = loc.y / mapInfo.resolution;
+                
+                // Shadow
+                ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                
+                // Marker
+                ctx.fillStyle = selectedLocation === name ? '#28a745' : '#dc3545';
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Reset shadow
+                ctx.shadowColor = 'transparent';
+                
+                // Label background
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                const textWidth = ctx.measureText(name).width;
+                ctx.fillRect(x - textWidth/2 - 3, y - 22, textWidth + 6, 14);
+                
+                // Label text
+                ctx.fillStyle = '#212529';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(name, x, y - 12);
+            });
+        }
+        
+        async function saveToServer() {
+            updateStatus('Saving to server...');
+            try {
+                const response = await fetch(`${API_URL}/api/locations`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(locations)
+                });
+                const result = await response.json();
+                updateStatus(`Saved ${result.count} locations to server`);
+            } catch (error) {
+                console.error('Save failed:', error);
+                updateStatus('Failed to save to server');
+            }
+        }
+        
+        async function loadFromServer() {
+            updateStatus('Loading from server...');
+            try {
+                const response = await fetch(`${API_URL}/api/locations`);
+                locations = await response.json();
+                updateLocationList();
+                redrawCanvas();
+                updateStatus(`Loaded ${Object.keys(locations).length} locations`);
+            } catch (error) {
+                console.error('Load failed:', error);
+                updateStatus('Failed to load from server');
+            }
+        }
+        
+        async function findPath() {
+            const from = document.getElementById('from-select').value;
+            const to = document.getElementById('to-select').value;
+            
+            if (!from || !to) {
+                alert('Please select both start and destination');
+                return;
+            }
+            
+            const fromLoc = locations[from];
+            const toLoc = locations[to];
+            
+            updateStatus('Calculating optimal path...');
+            document.getElementById('path-info').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/find_path`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        start: fromLoc,
+                        goal: toLoc
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentPath = result.path;
+                    
+                    document.getElementById('path-info').style.display = 'block';
+                    document.getElementById('path-distance').textContent = `${result.distance}m`;
+                    document.getElementById('path-waypoints').textContent = result.waypoints;
+                    document.getElementById('path-status').textContent = 'Optimal path found';
+                    
+                    redrawCanvas();
+                    updateStatus(`Path found: ${result.distance}m`);
+                } else {
+                    alert('No path found! Obstacles may be blocking the way.');
+                    updateStatus('No path found');
+                }
+            } catch (error) {
+                // Fallback to simple straight line
+                console.error('Server pathfinding failed:', error);
+                
+                const fromX = fromLoc.x / mapInfo.resolution;
+                const fromY = fromLoc.y / mapInfo.resolution;
+                const toX = toLoc.x / mapInfo.resolution;
+                const toY = toLoc.y / mapInfo.resolution;
+                
+                currentPath = [];
+                const steps = 50;
+                for (let i = 0; i <= steps; i++) {
+                    const t = i / steps;
+                    currentPath.push([
+                        fromX + (toX - fromX) * t,
+                        fromY + (toY - fromY) * t
+                    ]);
+                }
+                
+                const distance = Math.sqrt((toLoc.x - fromLoc.x) ** 2 + (toLoc.y - fromLoc.y) ** 2);
+                
+                document.getElementById('path-info').style.display = 'block';
+                document.getElementById('path-distance').textContent = `${distance.toFixed(2)}m`;
+                document.getElementById('path-waypoints').textContent = steps;
+                document.getElementById('path-status').textContent = 'Direct path (server offline)';
+                
+                redrawCanvas();
+                updateStatus('Using direct path (server offline)');
+            }
+        }
+        
+        function clearPath() {
+            currentPath = null;
+            document.getElementById('from-select').value = '';
+            document.getElementById('to-select').value = '';
+            document.getElementById('path-info').style.display = 'none';
+            redrawCanvas();
+            updateStatus('Path cleared');
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status-text').textContent = message;
+        }
+        
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
