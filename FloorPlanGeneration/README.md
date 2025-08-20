@@ -9,7 +9,7 @@ pip3 install flask flask-cors opencv-python matplotlib pillow pyyaml numpy
 # Start the server
 python3 map_server.py
 
-# Open browser to http://localhost:5001
+# Open browser to http://localhost:8080
 ```
 
 ## 📁 Files

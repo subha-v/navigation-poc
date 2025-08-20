@@ -209,10 +209,10 @@ if __name__ == '__main__':
         print("WARNING: Navigator not initialized properly")
     
     print("=" * 50)
-    print("Server starting on http://localhost:5001")
+    print("Server starting on http://localhost:8080")
     print("Open this URL in your browser to use the map editor")
-    print("Test the server: http://localhost:5001/api/test")
+    print("Test the server: http://localhost:8080/api/test")
     print("=" * 50)
     
     # Run with host='0.0.0.0' to allow external connections
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=8080)
