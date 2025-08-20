@@ -195,6 +195,131 @@ def test_endpoint():
     """Test endpoint to verify server is running"""
     return jsonify({'status': 'ok', 'message': 'Server is running'})
 
+# Navigation endpoints for Swift app
+
+@app.route('/api/navigate', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def navigate():
+    """Calculate navigation path between two points"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        if not data or 'start' not in data or 'goal' not in data:
+            return jsonify({'error': 'Missing start or goal coordinates'}), 400
+        
+        start = data['start']
+        goal = data['goal']
+        
+        # This is the same as find_path but with cleaner response format
+        start_pixels = navigator.meters_to_pixels(start['x'], start['y'])
+        goal_pixels = navigator.meters_to_pixels(goal['x'], goal['y'])
+        
+        path = navigator.find_path(start_pixels, goal_pixels)
+        
+        if path:
+            distance = navigator.calculate_path_length(path)
+            # Convert path to meters for consistency
+            path_meters = [[navigator.pixels_to_meters(p[0], p[1])[0], 
+                           navigator.pixels_to_meters(p[0], p[1])[1]] for p in path]
+            
+            return jsonify({
+                'success': True,
+                'path': path_meters,
+                'distance': round(distance, 2),
+                'waypoints': len(path),
+                'estimated_time': round(distance / 1.2, 0)  # 1.2 m/s walking speed
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'No path found between specified points'
+            })
+    except Exception as e:
+        print(f"Error in navigate: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Active anchors tracking
+active_anchors = {}
+
+@app.route('/api/anchors/register', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def register_anchor():
+    """Register an anchor device with its position"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        if not data or 'id' not in data or 'x' not in data or 'y' not in data:
+            return jsonify({'error': 'Missing anchor data'}), 400
+        
+        anchor_id = data['id']
+        active_anchors[anchor_id] = {
+            'x': data['x'],
+            'y': data['y'],
+            'timestamp': data.get('timestamp', 0),
+            'active': True
+        }
+        
+        print(f"Registered anchor: {anchor_id} at ({data['x']}, {data['y']})")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Anchor {anchor_id} registered',
+            'total_anchors': len(active_anchors)
+        })
+    except Exception as e:
+        print(f"Error registering anchor: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/anchors/status', methods=['GET', 'OPTIONS'])
+@cross_origin()
+def get_anchors():
+    """Get list of active anchor positions"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        import time
+        current_time = time.time()
+        
+        # Filter out anchors that haven't been seen in 60 seconds
+        active_list = []
+        for anchor_id, data in active_anchors.items():
+            if current_time - data.get('timestamp', 0) < 60:
+                active_list.append({
+                    'id': anchor_id,
+                    'x': data['x'],
+                    'y': data['y'],
+                    'active': True,
+                    'lastSeen': data.get('timestamp', 0)
+                })
+        
+        return jsonify(active_list)
+    except Exception as e:
+        print(f"Error getting anchors: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/anchors/unregister/<anchor_id>', methods=['DELETE', 'OPTIONS'])
+@cross_origin()
+def unregister_anchor(anchor_id):
+    """Unregister an anchor device"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        if anchor_id in active_anchors:
+            del active_anchors[anchor_id]
+            print(f"Unregistered anchor: {anchor_id}")
+            return jsonify({'success': True, 'message': f'Anchor {anchor_id} unregistered'})
+        else:
+            return jsonify({'error': 'Anchor not found'}), 404
+    except Exception as e:
+        print(f"Error unregistering anchor: {e}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     print("=" * 50)
     print("VALUENEX Office Map Server")

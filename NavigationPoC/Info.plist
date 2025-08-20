@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+    <key>CFBundlePackageType</key>
+    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+    </dict>
+    <key>UILaunchScreen</key>
+    <dict/>
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>armv7</string>
+        <string>nfc</string>
+    </array>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    
+    <!-- Nearby Interaction Permission -->
+    <key>NSNearbyInteractionAllowOnceUsageDescription</key>
+    <string>This app uses Nearby Interaction to provide precise indoor navigation by detecting the distance and direction to anchor devices.</string>
+    
+    <key>NSNearbyInteractionUsageDescription</key>
+    <string>This app uses Nearby Interaction to provide precise indoor navigation by detecting the distance and direction to anchor devices.</string>
+    
+    <!-- Motion Usage -->
+    <key>NSMotionUsageDescription</key>
+    <string>This app uses motion data to determine device orientation for accurate navigation arrow display.</string>
+    
+    <!-- Local Network Usage -->
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app uses the local network to communicate with nearby anchor devices for indoor navigation.</string>
+    
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_vnx-nav._tcp</string>
+    </array>
+    
+    <!-- Background Modes for Anchor -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>nearby-interaction</string>
+    </array>
+    
+    <!-- App Transport Security for local server -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>localhost</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+</plist>

@@ -1,62 +1,57 @@
 {
-  "hallway_upper": {
-    "x": 2.85,
-    "y": 5.0,
-    "description": "Upper hallway"
-  },
-  "hallway_lower": {
-    "x": 2.85,
-    "y": 18.0,
-    "description": "Lower hallway"
-  },
-  "enterance": {
-    "x": 3.56,
-    "y": 22.18,
-    "description": "Added via interactive editor"
-  },
-  "near victor desk": {
-    "x": 0.63,
-    "y": 13.29,
-    "description": "Added via interactive editor"
-  },
-  "near isabel desk": {
-    "x": 5.08,
-    "y": 13.45,
-    "description": "Added via interactive editor"
+  "beanbag": {
+    "description": "Added via interactive editor",
+    "x": 5.17,
+    "y": 11.59
   },
   "conference_room_enterance": {
+    "description": "Added via interactive editor",
     "x": 4.02,
-    "y": 9.04,
-    "description": "Added via interactive editor"
+    "y": 9.04
   },
   "david_desk": {
+    "description": "Added via interactive editor",
     "x": 1.81,
-    "y": 4.33,
-    "description": "Added via interactive editor"
+    "y": 4.33
   },
-  "taide_desk": {
-    "x": 3.79,
-    "y": 4.26,
-    "description": "Added via interactive editor"
-  },
-  "kitchen_sink": {
-    "x": 2.73,
-    "y": 1.2,
-    "description": "Added via interactive editor"
-  },
-  "beanbag": {
-    "x": 5.17,
-    "y": 11.59,
-    "description": "Added via interactive editor"
-  },
-  "side_table": {
-    "x": 4.62,
-    "y": 17.37,
-    "description": "Added via interactive editor"
+  "enterance": {
+    "description": "Added via interactive editor",
+    "x": 3.56,
+    "y": 22.18
   },
   "front_table": {
+    "description": "Added via interactive editor",
     "x": 0.78,
-    "y": 22.69,
-    "description": "Added via interactive editor"
+    "y": 22.69
+  },
+  "hallway_lower": {
+    "description": "Lower hallway",
+    "x": 2.85,
+    "y": 18
+  },
+  "hallway_upper": {
+    "description": "Upper hallway",
+    "x": 2.85,
+    "y": 5
+  },
+  "kitchen_sink": {
+    "description": "Added via interactive editor",
+    "x": 2.73,
+    "y": 1.2
+  },
+  "near isabel desk": {
+    "description": "Added via interactive editor",
+    "x": 5.08,
+    "y": 13.45
+  },
+  "side_table": {
+    "description": "Added via interactive editor",
+    "x": 4.62,
+    "y": 17.37
+  },
+  "taide_desk": {
+    "description": "Added via interactive editor",
+    "x": 3.79,
+    "y": 4.26
   }
 }
