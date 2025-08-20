@@ -19,7 +19,7 @@ navigator = FloorPlanNavigator(CONFIG_FILE)
 @app.route('/')
 def index():
     """Serve the main HTML interface"""
-    with open('web_map_editor.html', 'r') as f:
+    with open('web_map_editor_connected.html', 'r') as f:
         return f.read()
 
 @app.route('/<path:filename>')

@@ -1,37 +1,62 @@
 {
-  "entrance": {
-    "x": 2.85,
-    "y": 1.0,
-    "description": "Main entrance"
-  },
-  "reception": {
-    "x": 2.85,
-    "y": 2.0,
-    "description": "Reception area"
-  },
-  "desk_1": {
-    "x": 1.5,
-    "y": 4.0,
-    "description": "Desk area 1"
-  },
-  "desk_2": {
-    "x": 4.2,
-    "y": 4.0,
-    "description": "Desk area 2"
-  },
   "hallway_upper": {
     "x": 2.85,
     "y": 5.0,
     "description": "Upper hallway"
   },
-  "hallway_middle": {
-    "x": 2.85,
-    "y": 12.0,
-    "description": "Middle hallway"
-  },
   "hallway_lower": {
     "x": 2.85,
     "y": 18.0,
     "description": "Lower hallway"
+  },
+  "enterance": {
+    "x": 3.56,
+    "y": 22.18,
+    "description": "Added via interactive editor"
+  },
+  "near victor desk": {
+    "x": 0.63,
+    "y": 13.29,
+    "description": "Added via interactive editor"
+  },
+  "near isabel desk": {
+    "x": 5.08,
+    "y": 13.45,
+    "description": "Added via interactive editor"
+  },
+  "conference_room_enterance": {
+    "x": 4.02,
+    "y": 9.04,
+    "description": "Added via interactive editor"
+  },
+  "david_desk": {
+    "x": 1.81,
+    "y": 4.33,
+    "description": "Added via interactive editor"
+  },
+  "taide_desk": {
+    "x": 3.79,
+    "y": 4.26,
+    "description": "Added via interactive editor"
+  },
+  "kitchen_sink": {
+    "x": 2.73,
+    "y": 1.2,
+    "description": "Added via interactive editor"
+  },
+  "beanbag": {
+    "x": 5.17,
+    "y": 11.59,
+    "description": "Added via interactive editor"
+  },
+  "side_table": {
+    "x": 4.62,
+    "y": 17.37,
+    "description": "Added via interactive editor"
+  },
+  "front_table": {
+    "x": 0.78,
+    "y": 22.69,
+    "description": "Added via interactive editor"
   }
 }
