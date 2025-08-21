@@ -10,8 +10,8 @@ class PathfindingService: ObservableObject {
     @Published var isCalculating = false
     @Published var errorMessage: String?
     
-    // Python server configuration
-    private let serverURL = "http://localhost:8080"
+    // Python server configuration (update ServerConfig.swift with your IP)
+    private let serverURL = ServerConfig.serverURL
     private var cancellables = Set<AnyCancellable>()
     
     private init() {}
