@@ -30,10 +30,9 @@ class SupabaseService: ObservableObject {
     func checkAuthStatus() async {
         do {
             let session = try await supabase.auth.session
-            isAuthenticated = session != nil
-            if let userId = session?.user.id {
-                await fetchUserProfile(userId: userId)
-            }
+            isAuthenticated = true
+            let userId = session.user.id
+            await fetchUserProfile(userId: userId)
         } catch {
             print("Error checking auth status: \(error)")
             isAuthenticated = false
@@ -48,7 +47,7 @@ class SupabaseService: ObservableObject {
         do {
             let authResponse = try await supabase.auth.signUp(email: email, password: password, data: [:])
             
-            guard let userId = authResponse.user?.id else {
+            guard let userId = authResponse.user.id else {
                 throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to get user ID"])
             }
             
@@ -84,7 +83,7 @@ class SupabaseService: ObservableObject {
         do {
             let session = try await supabase.auth.signIn(email: email, password: password)
             
-            guard let userId = session.user?.id else {
+            guard let userId = session.user.id else {
                 throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to get user ID"])
             }
             
@@ -145,13 +144,21 @@ class SupabaseService: ObservableObject {
     func saveNavigationRating(destination: String, rating: Int, feedback: String?) async {
         guard let userId = currentUser?.id else { return }
         
-        let ratingData: [String: Any] = [
-            "user_id": userId.uuidString,
-            "destination": destination,
-            "rating": rating,
-            "feedback": feedback ?? "",
-            "created_at": ISO8601DateFormatter().string(from: Date())
-        ]
+        struct NavigationRating: Encodable {
+            let user_id: String
+            let destination: String
+            let rating: Int
+            let feedback: String
+            let created_at: String
+        }
+        
+        let ratingData = NavigationRating(
+            user_id: userId.uuidString,
+            destination: destination,
+            rating: rating,
+            feedback: feedback ?? "",
+            created_at: ISO8601DateFormatter().string(from: Date())
+        )
         
         do {
             try await supabase.database
