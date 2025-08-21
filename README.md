@@ -1,189 +1,222 @@
-# E57 to Nav2 Map Converter
+# VALUENEX Indoor Navigation System
 
-Converts E57 LiDAR point cloud scans to Nav2-compatible occupancy grid maps for indoor navigation.
+A proof-of-concept indoor navigation system using Ultra-Wideband (UWB) technology via Apple's Nearby Interaction API, combined with AI-powered floor plan analysis and A* pathfinding algorithms.
 
-## Overview
+## Project Overview
 
-This tool processes raw `.e57` point cloud data and generates:
-- `grid.png` - 8-bit grayscale occupancy image (0=free, 255=occupied)
-- `grid.yaml` - Nav2/ROS map metadata file
-- `report.json` - Conversion statistics and parameters
+This system enables precise indoor navigation in the VALUENEX office (5.71m × 23.19m) by combining:
+- **UWB-based trilateration** using iPhone 11+ devices as anchors and navigators
+- **AI-analyzed floor plans** with obstacle detection and path planning
+- **Real-time navigation** with visual arrow guidance and distance measurements
+- **Web-based map editor** for location management and testing
 
-The output maps are fully compatible with Nav2/ROS map_server and ready for A* path planning.
+## System Architecture
 
-## Installation
+### 1. Floor Plan Generation (`/FloorPlanGeneration`)
+Python-based backend for floor plan processing and pathfinding:
 
-### Using Conda (Recommended)
+- **`astar_navigation.py`** - A* pathfinding algorithm with obstacle inflation
+- **`map_server.py`** - Flask REST API server (port 8080) providing:
+  - Navigation endpoints for the Swift app
+  - Location management API
+  - Anchor registration and status tracking
+- **`web_map_editor_connected.html`** - Interactive web interface for:
+  - Adding/editing office locations
+  - Testing pathfinding between points
+  - Visualizing navigation paths
+- **`floor_plan_updated_config.yaml`** - Floor plan configuration (5mm resolution)
+- **`office_locations_updated.json`** - Predefined office locations (kitchen, entrance, desks, etc.)
 
-```bash
-# Create environment with PDAL E57 support
-conda env create -f environment.yml
-conda activate e57_nav
+### 2. iOS Navigation App (`/NavigationPoC`)
+Swift package implementing UWB-based indoor navigation:
+
+#### Core Services
+- **`NearbyInteractionService.swift`** - UWB ranging and device discovery
+- **`NavigationService.swift`** - Navigation engine with arrow direction calculation
+- **`PathfindingService.swift`** - Integration with Python A* server
+- **`CoordinateTransformService.swift`** - Converts UWB measurements to floor plan coordinates
+- **`SupabaseService.swift`** - Authentication and user management
+
+#### UI Views
+- **`LoginView.swift`** - User authentication
+- **`RoleSelectionView.swift`** - Choose anchor or navigator role
+- **`AnchorView.swift`** - Interface for fixed anchor devices
+- **`TaggerView.swift`** - Destination selection for navigators
+- **`NavigationView.swift`** - Real-time navigation with arrow display
+
+#### Models
+- **`User.swift`** - User profiles with roles (anchor/tagger)
+- **`FloorPlan.swift`** - Office locations and navigation destinations
+- **`NavigationPath.swift`** - Path representation and waypoint management
+
+## How It Works
+
+### Setup Phase
+1. **Deploy 3 Anchor iPhones** at fixed positions:
+   - Kitchen (2.73m, 1.2m)
+   - Entrance (3.56m, 22.18m)
+   - Side Table (4.62m, 17.37m)
+
+2. **Start Python Server** on local network:
+   ```bash
+   cd FloorPlanGeneration
+   python3 map_server.py
+   ```
+
+3. **Configure Anchors** via iOS app:
+   - Sign in as "anchor" role
+   - Select position (kitchen/entrance/side table)
+   - Start broadcasting UWB signals
+
+### Navigation Phase
+1. **Navigator (Tagger) Setup**:
+   - Sign in as "tagger" role
+   - Select destination from available locations
+   - Start navigation
+
+2. **Position Calculation**:
+   - App measures distances to all 3 anchors using UWB
+   - Trilateration algorithm calculates precise position
+   - Position converted to floor plan coordinates
+
+3. **Path Guidance**:
+   - Python server calculates optimal path using A*
+   - App displays arrow pointing to next waypoint
+   - Real-time distance and direction updates
+   - Path recalculation if user deviates >2m
+
+## Technical Specifications
+
+### UWB Ranging
+- **Technology**: Apple Nearby Interaction API
+- **Accuracy**: ~10cm in ideal conditions
+- **Update Rate**: 10-15 Hz
+- **Range**: Up to 9 meters
+- **Requirements**: iPhone 11+ with U1 chip
+
+### Floor Plan Processing
+- **Resolution**: 5mm per pixel
+- **Office Dimensions**: 5.71m × 23.19m
+- **Obstacle Inflation**: 30cm radius for safe navigation
+- **Path Smoothing**: Waypoint reduction algorithm
+
+### Network Architecture
+- **Local Server**: Flask on port 8080
+- **Authentication**: Supabase cloud service
+- **Device Discovery**: MultipeerConnectivity framework
+- **API Format**: RESTful JSON
+
+## Project Structure
+
+```
+/Navigation PoC/
+├── FloorPlanGeneration/          # Python backend
+│   ├── map_server.py             # Flask API server
+│   ├── astar_navigation.py       # Pathfinding algorithm
+│   ├── web_map_editor_connected.html  # Web interface
+│   ├── floor_plan_updated_config.yaml # Map configuration
+│   ├── office_locations_updated.json  # Location database
+│   └── VNX_BW_Floorplan_Updated.PNG  # Office floor plan
+│
+├── NavigationPoC/                # iOS Swift app
+│   ├── Package.swift             # Swift package manifest
+│   ├── Sources/NavigationPoC/
+│   │   ├── App/                  # App entry point
+│   │   ├── Models/               # Data models
+│   │   ├── Services/             # Core services
+│   │   └── Views/                # SwiftUI views
+│   ├── Tests/                    # Unit tests
+│   ├── Info.plist                # App configuration
+│   ├── ExportOptions.plist       # TestFlight config
+│   └── TestFlightREADME.md       # Deployment guide
+│
+└── CLAUDE.md                     # AI assistant instructions
 ```
 
-### Manual Installation
+## Key Features
 
-1. Install PDAL with E57 support:
-```bash
-conda install -c conda-forge pdal python-pdal
-```
+- **Real-time Indoor Positioning**: <10cm accuracy using UWB trilateration
+- **Intelligent Path Planning**: A* algorithm with obstacle avoidance
+- **Visual Navigation**: Arrow-based guidance with distance indicators
+- **Multi-floor Support**: Ready for expansion to multiple building levels
+- **Web Testing Interface**: Browser-based path visualization and testing
+- **Role-based System**: Separate interfaces for anchors and navigators
+- **Cloud Authentication**: Secure user management via Supabase
+- **Offline Capability**: Local server for reliability
 
-2. Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
+## Getting Started
 
-## Usage
+### Prerequisites
+- 4 iPhones with iOS 16+ and U1 chip (iPhone 11 or newer)
+- Mac with Xcode 15+
+- Python 3.8+
+- Local WiFi network
+- Apple Developer account (for device deployment)
+- Supabase account (free tier works)
 
-Basic conversion:
-```bash
-python e57_to_navmap.py --in scan.e57 --out output_map
-```
+### Installation
 
-With custom parameters:
-```bash
-python e57_to_navmap.py \
-    --in data/building.e57 \
-    --out maps/floor1 \
-    --res 0.05 \
-    --zmin 0.15 \
-    --zmax 2.0 \
-    --inflate 0.25 \
-    --preview
-```
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/subha-v/navigation-poc.git
+   cd "Navigation PoC"
+   ```
 
-### Command-Line Options
+2. **Set up Python server**:
+   ```bash
+   cd FloorPlanGeneration
+   pip install flask flask-cors pyyaml numpy pillow
+   python3 map_server.py
+   ```
 
-- `--in` (required): Path to input E57 file
-- `--out` (required): Output directory for map files
-- `--res`: Grid resolution in meters/pixel (default: 0.10)
-- `--zmin`: Min height above floor to include (default: 0.10m)
-- `--zmax`: Max height above floor to include (default: 2.20m)
-- `--inflate`: Obstacle inflation radius in meters (default: 0.30m)
-- `--preview`: Generate preview image with scale bar
+3. **Configure iOS app**:
+   - Open `NavigationPoC` in Xcode
+   - Update `SupabaseService.swift` with your credentials (already configured)
+   - Set your Apple Developer Team ID
+   - Build and run on devices
 
-## Map Format
+4. **Access web interface**:
+   - Open browser to `http://localhost:8080`
+   - Add/edit office locations
+   - Test pathfinding
 
-### Coordinate System
+## Use Cases
 
-The map uses a **floor-aligned local frame**:
-- Origin: Bottom-left pixel of the image
-- X-axis: Rightward in the image (East in map frame)
-- Y-axis: Upward in the image (North in map frame)
-- Units: Meters
+1. **Conference Navigation**: Guide attendees to specific booths or rooms
+2. **Emergency Evacuation**: Direct people to nearest exits
+3. **Accessibility**: Assist visually impaired users with precise guidance
+4. **Asset Tracking**: Locate equipment or personnel in real-time
+5. **Visitor Management**: Guide guests to meeting rooms or offices
 
-### YAML Fields
+## Future Enhancements
 
-```yaml
-image: grid.png          # Occupancy grid image file
-mode: trinary           # Occupancy mode (free/occupied/unknown)
-resolution: 0.10        # Meters per pixel
-origin: [x, y, 0.0]     # Bottom-left pixel pose (meters, radians)
-negate: 0               # Don't invert colors
-occupied_thresh: 0.65   # Threshold for occupied cells
-free_thresh: 0.20       # Threshold for free cells
-```
+- [ ] Multi-floor navigation with elevator/stair routing
+- [ ] Voice-guided navigation
+- [ ] Augmented Reality overlay
+- [ ] Historical path analytics
+- [ ] Integration with calendar for automatic destination selection
+- [ ] Support for more anchor devices for improved accuracy
+- [ ] Android app version
+- [ ] Cloud-based path computation for scalability
 
-### Pixel to World Coordinates
+## Technologies Used
 
-To convert between pixel coordinates and world coordinates:
+- **iOS**: Swift 5.9, SwiftUI, Nearby Interaction, MultipeerConnectivity
+- **Backend**: Python 3, Flask, NumPy, Pillow
+- **Cloud**: Supabase (PostgreSQL, Authentication)
+- **Algorithms**: A* pathfinding, Trilateration, Kalman filtering
+- **Protocols**: REST API, WebSockets (planned)
 
-```
-World X = origin[0] + pixel_x * resolution
-World Y = origin[1] + (height - 1 - pixel_y) * resolution
-```
+## Contributing
 
-Note: Image row 0 is at the **top**, but represents the **maximum** Y coordinate in the map frame.
+This is a proof-of-concept project for VALUENEX. For contributions or questions, please contact the development team.
 
-### Image Convention
+## License
 
-```
-Image Space:          Map Space:
-[0,0]---->[x]        [max_y]
-  |                     ^
-  v                     |
- [y]                [min_y]---->[max_x]
-                      origin
-```
+Proprietary - VALUENEX © 2024
 
-## Parameters Guide
+## Acknowledgments
 
-### Resolution
-- **0.10 m/px**: Standard for most indoor spaces
-- **0.05 m/px**: For narrow corridors or detailed maps
-- **0.20 m/px**: For large open spaces, faster planning
-
-### Height Slice (zmin/zmax)
-- **zmin=0.10m**: Ignore floor noise
-- **zmax=2.20m**: Capture walls and human-scale obstacles
-- Adjust based on your environment and robot height
-
-### Inflation
-- **0.30m**: Standard body width + safety margin
-- **0.20m**: Tighter spaces, skilled operators
-- **0.40m**: Conservative, wider clearance
-
-## Output Files
-
-### grid.png
-8-bit grayscale image:
-- 0 (black): Free space
-- 255 (white): Occupied/obstacles
-
-### grid.yaml
-Nav2-compatible map metadata linking the image to world coordinates.
-
-### report.json
-Conversion statistics including:
-- Point counts at each stage
-- Map dimensions and extents
-- Occupancy ratio
-- Processing parameters
-
-## Pipeline Stages
-
-1. **Read E57**: Load and merge all point clouds in file
-2. **Preprocess**: Downsample (3cm voxel) and remove outliers
-3. **Floor Detection**: RANSAC plane fitting and alignment
-4. **Normalization**: Rotate to align floor with Z=0
-5. **Slicing**: Keep points between zmin and zmax
-6. **Projection**: Orthographic projection to 2D
-7. **Rasterization**: Convert to occupancy grid
-8. **Morphology**: Close small gaps, inflate obstacles
-9. **Export**: Save PNG + YAML in Nav2 format
-
-## Validation
-
-The tool performs automatic validation:
-- Verifies PDAL E57 reader availability
-- Checks minimum point counts
-- Validates floor plane detection
-- Warns on suspicious occupancy ratios (>90% or <1%)
-
-## Integration with Nav2
-
-Load the generated map in Nav2/ROS2:
-
-```bash
-ros2 run nav2_map_server map_server --ros-args \
-    -p yaml_filename:=output_map/grid.yaml
-```
-
-Or in ROS1:
-```bash
-rosrun map_server map_server output_map/grid.yaml
-```
-
-## A* Path Planning
-
-The generated PNG can be used directly for A* planning:
-- Treat pixels as graph nodes
-- Use 8-connected neighbors for smooth paths
-- Cost = 1 for free cells, infinite for occupied
-
-## Limitations
-
-- Only supports Cartesian E57 files (not spherical)
-- Assumes single floor/level (no multi-story)
-- Requires adequate point density for wall detection
-- Static maps only (no dynamic obstacles)
+- Apple for Nearby Interaction API documentation
+- OpenAI for AI-assisted development
+- Supabase for authentication infrastructure
