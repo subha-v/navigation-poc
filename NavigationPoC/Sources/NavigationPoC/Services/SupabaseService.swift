@@ -15,8 +15,8 @@ class SupabaseService: ObservableObject {
     
     private init() {
         // Replace with your Supabase project URL and anon key
-        let supabaseURL = URL(string: "https://your-project.supabase.co")!
-        let supabaseKey = "your-anon-key"
+        let supabaseURL = URL(string: "https://hofzmltxieveekiwvjxy.supabase.co")!
+        let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvZnptbHR4aWV2ZWVraXd2anh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MTI3NzksImV4cCI6MjA3MTM4ODc3OX0.PUOwftAd855RuVSiLqPm3VzGjLPM-3JipwPFEvK3Szw"
         
         self.supabase = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: supabaseKey)
         
@@ -45,7 +45,7 @@ class SupabaseService: ObservableObject {
         errorMessage = nil
         
         do {
-            let authResponse = try await supabase.auth.signUp(email: email, password: password)
+            let authResponse = try await supabase.auth.signUp(email: email, password: password, data: [:])
             
             guard let userId = authResponse.user?.id else {
                 throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to get user ID"])
@@ -83,7 +83,7 @@ class SupabaseService: ObservableObject {
         do {
             let session = try await supabase.auth.signIn(email: email, password: password)
             
-            guard let userId = session.user.id else {
+            guard let userId = session.user?.id else {
                 throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to get user ID"])
             }
             

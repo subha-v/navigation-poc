@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "NavigationPoC",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v16),
+        .macOS(.v13)
     ],
     products: [
         .library(
@@ -22,10 +23,12 @@ let package = Package(
                 .product(name: "Supabase", package: "supabase-swift"),
                 .product(name: "Alamofire", package: "Alamofire")
             ],
-            path: "Sources"
+            path: "Sources/NavigationPoC"
         ),
         .testTarget(
             name: "NavigationPoCTests",
-            dependencies: ["NavigationPoC"]),
+            dependencies: ["NavigationPoC"],
+            path: "Tests/NavigationPoCTests"
+        ),
     ]
 )
