@@ -39,6 +39,10 @@ Packages/
 Package.pins
 Package.resolved
 
+# Sensitive Configuration Files
+NavigationPoC/Sources/NavigationPoC/Config/SupabaseConfig.swift
+**/SupabaseConfig.swift
+
 # E57 files (large)
 *.e57
 

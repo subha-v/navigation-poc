@@ -14,11 +14,12 @@ class SupabaseService: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     private init() {
-        // Replace with your Supabase project URL and anon key
-        let supabaseURL = URL(string: "https://hofzmltxieveekiwvjxy.supabase.co")!
-        let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvZnptbHR4aWV2ZWVraXd2anh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MTI3NzksImV4cCI6MjA3MTM4ODc3OX0.PUOwftAd855RuVSiLqPm3VzGjLPM-3JipwPFEvK3Szw"
+        // Credentials are loaded from SupabaseConfig.swift (not in version control)
+        guard let supabaseURL = URL(string: SupabaseConfig.url) else {
+            fatalError("Invalid Supabase URL in SupabaseConfig.swift")
+        }
         
-        self.supabase = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: supabaseKey)
+        self.supabase = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: SupabaseConfig.anonKey)
         
         Task {
             await checkAuthStatus()
