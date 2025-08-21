@@ -4,7 +4,7 @@
 
 1. **Copy the template file**:
    ```bash
-   cp SupabaseConfig.template.swift SupabaseConfig.swift
+   cp SupabaseConfig.template SupabaseConfig.swift
    ```
 
 2. **Edit SupabaseConfig.swift** and add your Supabase credentials:
@@ -16,7 +16,7 @@
 ## Security Notes
 
 - **NEVER** commit `SupabaseConfig.swift` to version control
-- The template file (`SupabaseConfig.template.swift`) is safe to commit
+- The template file (`SupabaseConfig.template`) is safe to commit
 - Keep your credentials secure and rotate them if exposed
 - For production, consider using environment variables or a secure key management system
 
