@@ -2,9 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSNearbyInteractionAllowOnceUsageDescription</key>
+	<string>This app uses Nearby Interaction to help you navigate to other phones acting as anchors.</string>
+	<key>NSNearbyInteractionUsageDescription</key>
+	<string>This app uses Ultra-Wideband technology to measure distance and direction to nearby anchor devices for navigation.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>nearby-interaction</string>
 	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>nearby-interaction</string>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
