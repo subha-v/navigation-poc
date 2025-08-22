@@ -1,53 +1,41 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+import simd
 
 @MainActor
 class NavigationService: ObservableObject {
     static let shared = NavigationService()
     
-    @Published var currentLocation: CGPoint = .zero
-    @Published var targetLocation: CGPoint?
-    @Published var navigationPath: [CGPoint] = []
     @Published var isNavigating = false
-    @Published var distanceToTarget: Double = 0
     @Published var arrowRotation: Double = 0
+    
+    private let nearbyInteractionService = NearbyInteractionService.shared
     
     private init() {}
     
-    func startNavigation(to destination: CGPoint) {
-        targetLocation = destination
+    func startNavigation() {
         isNavigating = true
-        updateNavigation()
+        nearbyInteractionService.startSession()
     }
     
     func stopNavigation() {
-        targetLocation = nil
         isNavigating = false
-        navigationPath = []
+        nearbyInteractionService.stopSession()
     }
     
-    func updateCurrentLocation(_ location: CGPoint) {
-        currentLocation = location
-        if isNavigating {
-            updateNavigation()
+    func updateArrowRotation(from direction: simd_float3?) {
+        guard let direction = direction else {
+            arrowRotation = 0
+            return
         }
-    }
-    
-    private func updateNavigation() {
-        guard let target = targetLocation else { return }
         
-        // Calculate distance
-        let dx = target.x - currentLocation.x
-        let dy = target.y - currentLocation.y
-        distanceToTarget = sqrt(dx * dx + dy * dy)
+        // Convert 3D direction vector to 2D rotation angle
+        // Using x and z components for horizontal plane rotation
+        let angle = atan2(Double(direction.x), Double(direction.z))
         
-        // Calculate arrow rotation (in radians)
-        arrowRotation = atan2(dy, dx)
-        
-        // Check if arrived (within 0.5 meters)
-        if distanceToTarget < 0.5 {
-            stopNavigation()
-        }
+        // Convert to degrees and adjust for UI
+        // Negative because SwiftUI rotation is clockwise
+        arrowRotation = -angle * 180 / Double.pi
     }
 }

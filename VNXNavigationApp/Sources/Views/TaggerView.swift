@@ -3,15 +3,6 @@ import SwiftUI
 struct TaggerView: View {
     @EnvironmentObject var navigationService: NavigationService
     @EnvironmentObject var nearbyInteractionService: NearbyInteractionService
-    @State private var selectedDestination = "Conference Room"
-    
-    let destinations = [
-        "Conference Room",
-        "Kitchen",
-        "Reception",
-        "Meeting Room 1",
-        "Meeting Room 2"
-    ]
     
     var body: some View {
         VStack(spacing: 20) {
@@ -19,37 +10,21 @@ struct TaggerView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            // Destination selector
-            VStack(alignment: .leading) {
-                Text("Select Destination")
-                    .font(.headline)
-                
-                Picker("Destination", selection: $selectedDestination) {
-                    ForEach(destinations, id: \.self) { destination in
-                        Text(destination).tag(destination)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-            }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(10)
+            Text("Find and navigate to anchor phones")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            // Status display
+            StatusDisplayView()
             
             // Navigation display
-            if navigationService.isNavigating {
+            if nearbyInteractionService.connectionState == .connected {
                 NavigationDisplayView()
-            }
-            
-            // Distance indicator
-            if let distance = nearbyInteractionService.distance {
-                Text("Distance to nearest anchor: \(String(format: "%.1f", distance))m")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
             
             Spacer()
             
-            // Start navigation button
+            // Control button
             Button(action: toggleNavigation) {
                 Text(navigationService.isNavigating ? "Stop Navigation" : "Start Navigation")
                     .frame(maxWidth: .infinity)
@@ -62,44 +37,117 @@ struct TaggerView: View {
         .padding()
         .navigationTitle("Navigator")
         .navigationBarTitleDisplayMode(.inline)
+        .onReceive(nearbyInteractionService.$direction) { direction in
+            navigationService.updateArrowRotation(from: direction)
+        }
     }
     
     private func toggleNavigation() {
         if navigationService.isNavigating {
             navigationService.stopNavigation()
-            nearbyInteractionService.stopSession()
         } else {
-            // Start navigation to selected destination
-            // This would normally fetch the destination coordinates from the server
-            navigationService.startNavigation(to: CGPoint(x: 5, y: 10))
-            nearbyInteractionService.startSession()
+            navigationService.startNavigation()
+        }
+    }
+}
+
+struct StatusDisplayView: View {
+    @EnvironmentObject var nearbyInteractionService: NearbyInteractionService
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack {
+                Circle()
+                    .fill(statusColor)
+                    .frame(width: 12, height: 12)
+                
+                Text(statusText)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            if nearbyInteractionService.connectionState == .disconnected && 
+               nearbyInteractionService.isRunning {
+                Text("Anchor phone not available")
+                    .font(.headline)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(10)
+    }
+    
+    private var statusColor: Color {
+        switch nearbyInteractionService.connectionState {
+        case .connected:
+            return .green
+        case .searching:
+            return .orange
+        case .disconnected:
+            return .red
+        }
+    }
+    
+    private var statusText: String {
+        switch nearbyInteractionService.connectionState {
+        case .connected:
+            return "Connected to anchor"
+        case .searching:
+            return "Searching for anchor phones..."
+        case .disconnected:
+            return nearbyInteractionService.isRunning ? "No anchor found" : "Not searching"
         }
     }
 }
 
 struct NavigationDisplayView: View {
     @EnvironmentObject var navigationService: NavigationService
+    @EnvironmentObject var nearbyInteractionService: NearbyInteractionService
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             // Arrow indicator
-            Image(systemName: "arrow.up")
+            Image(systemName: "location.north.fill")
                 .font(.system(size: 80))
                 .foregroundColor(.blue)
-                .rotationEffect(Angle(radians: navigationService.arrowRotation))
+                .rotationEffect(Angle(degrees: navigationService.arrowRotation))
                 .animation(.easeInOut(duration: 0.3), value: navigationService.arrowRotation)
             
             // Distance display
-            Text("\(String(format: "%.1f", navigationService.distanceToTarget))m")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+            if let distance = nearbyInteractionService.distance {
+                VStack(spacing: 5) {
+                    Text(String(format: "%.1f", distance))
+                        .font(.system(size: 60, weight: .bold))
+                        .foregroundColor(.blue)
+                    
+                    Text("meters")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                    
+                    Text("to anchor phone")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                Text("Calculating distance...")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+            }
             
-            Text("to destination")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            // Connected anchor info
+            if let anchorName = nearbyInteractionService.connectedPeers.first?.displayName {
+                Text("Anchor: \(anchorName)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(8)
+            }
         }
         .padding()
-        .background(Color.blue.opacity(0.1))
+        .background(Color.blue.opacity(0.05))
         .cornerRadius(15)
     }
 }

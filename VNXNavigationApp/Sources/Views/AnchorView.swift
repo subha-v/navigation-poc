@@ -2,9 +2,6 @@ import SwiftUI
 
 struct AnchorView: View {
     @EnvironmentObject var nearbyInteractionService: NearbyInteractionService
-    @State private var selectedLocation = "Kitchen"
-    
-    let anchorLocations = ["Kitchen", "Entrance", "Side Table"]
     
     var body: some View {
         VStack(spacing: 20) {
@@ -12,45 +9,78 @@ struct AnchorView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("This device is providing location reference")
+            Text("Broadcasting location for navigators")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            // Location selector
-            VStack(alignment: .leading) {
-                Text("Anchor Position")
-                    .font(.headline)
-                
-                Picker("Location", selection: $selectedLocation) {
-                    ForEach(anchorLocations, id: \.self) { location in
-                        Text(location).tag(location)
-                    }
+            // Status indicator
+            VStack(spacing: 15) {
+                // Broadcasting status
+                HStack {
+                    Circle()
+                        .fill(nearbyInteractionService.isRunning ? Color.green : Color.red)
+                        .frame(width: 20, height: 20)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.green.opacity(0.3), lineWidth: 2)
+                                .scaleEffect(nearbyInteractionService.isRunning ? 2 : 1)
+                                .opacity(nearbyInteractionService.isRunning ? 0 : 1)
+                                .animation(
+                                    nearbyInteractionService.isRunning ?
+                                    Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true) :
+                                    .default,
+                                    value: nearbyInteractionService.isRunning
+                                )
+                        )
+                    
+                    Text(nearbyInteractionService.isRunning ? "Broadcasting" : "Offline")
+                        .font(.title2)
+                        .fontWeight(.semibold)
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                
+                // Connection info
+                if nearbyInteractionService.isRunning {
+                    VStack(spacing: 10) {
+                        Image(systemName: "antenna.radiowaves.left.and.right")
+                            .font(.system(size: 50))
+                            .foregroundColor(.blue)
+                        
+                        Text("\(nearbyInteractionService.connectedPeers.count)")
+                            .font(.system(size: 40, weight: .bold))
+                            .foregroundColor(.blue)
+                        
+                        Text(nearbyInteractionService.connectedPeers.count == 1 ? "Navigator Connected" : "Navigators Connected")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(15)
+                }
             }
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(10)
             
-            // Status indicator
-            HStack {
-                Circle()
-                    .fill(nearbyInteractionService.isRunning ? Color.green : Color.red)
-                    .frame(width: 12, height: 12)
-                
-                Text(nearbyInteractionService.isRunning ? "Broadcasting" : "Offline")
-                    .font(.subheadline)
-            }
-            
-            // Connected devices
+            // Connected devices list
             if !nearbyInteractionService.connectedPeers.isEmpty {
-                VStack(alignment: .leading) {
-                    Text("Connected Devices")
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Connected Navigators")
                         .font(.headline)
                     
                     ForEach(nearbyInteractionService.connectedPeers, id: \.self) { peer in
-                        Text(peer.displayName)
-                            .font(.caption)
+                        HStack {
+                            Image(systemName: "iphone")
+                                .foregroundColor(.blue)
+                            Text(peer.displayName)
+                                .font(.subheadline)
+                            Spacer()
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                                .font(.caption)
+                        }
+                        .padding(.vertical, 5)
                     }
                 }
                 .padding()
@@ -62,13 +92,24 @@ struct AnchorView: View {
             
             // Control button
             Button(action: toggleBroadcast) {
-                Text(nearbyInteractionService.isRunning ? "Stop Broadcasting" : "Start Broadcasting")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(nearbyInteractionService.isRunning ? Color.red : Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                HStack {
+                    Image(systemName: nearbyInteractionService.isRunning ? "stop.circle.fill" : "play.circle.fill")
+                        .font(.title2)
+                    Text(nearbyInteractionService.isRunning ? "Stop Broadcasting" : "Start Broadcasting")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(nearbyInteractionService.isRunning ? Color.red : Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
             }
+            
+            // Info text
+            Text("Keep this screen open while acting as an anchor")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
         .padding()
         .navigationTitle("Anchor")
