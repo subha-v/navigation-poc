@@ -2,6 +2,9 @@
 
 A proof-of-concept indoor navigation system using Ultra-Wideband (UWB) technology via Apple's Nearby Interaction API, combined with AI-powered floor plan analysis and A* pathfinding algorithms.
 
+**Last Updated**: August 21, 2024  
+**Current Version**: 2.0 (VNXNavigationApp)
+
 ## Project Overview
 
 This system enables precise indoor navigation in the VALUENEX office (5.71m × 23.19m) by combining:
@@ -118,17 +121,18 @@ Swift package implementing UWB-based indoor navigation:
 │   ├── office_locations_updated.json  # Location database
 │   └── VNX_BW_Floorplan_Updated.PNG  # Office floor plan
 │
-├── NavigationPoC/                # iOS Swift app
-│   ├── Package.swift             # Swift package manifest
-│   ├── Sources/NavigationPoC/
+├── VNXNavigationApp/             # iOS Swift app (Current)
+│   ├── VNXNavigationApp.xcodeproj  # Xcode project
+│   ├── VNXNavigationApp/         # App source files
+│   │   ├── Assets.xcassets/     # App icons and colors
+│   │   └── Info.plist            # App permissions
+│   ├── Sources/                  # Swift source code
 │   │   ├── App/                  # App entry point
+│   │   ├── Config/               # Configuration files
 │   │   ├── Models/               # Data models
 │   │   ├── Services/             # Core services
 │   │   └── Views/                # SwiftUI views
-│   ├── Tests/                    # Unit tests
-│   ├── Info.plist                # App configuration
-│   ├── ExportOptions.plist       # TestFlight config
-│   └── TestFlightREADME.md       # Deployment guide
+│   └── Package.swift             # Package dependencies
 │
 └── CLAUDE.md                     # AI assistant instructions
 ```
@@ -170,9 +174,10 @@ Swift package implementing UWB-based indoor navigation:
    ```
 
 3. **Configure iOS app**:
-   - Open `NavigationPoC` in Xcode
-   - Update `SupabaseService.swift` with your credentials (already configured)
-   - Set your Apple Developer Team ID
+   - Open `VNXNavigationApp.xcodeproj` in Xcode
+   - Supabase credentials are in `Sources/Config/SupabaseConfig.swift`
+   - Server IP is in `Sources/Config/ServerConfig.swift`
+   - Set your Apple Developer Team ID in project settings
    - Build and run on devices
 
 4. **Access web interface**:

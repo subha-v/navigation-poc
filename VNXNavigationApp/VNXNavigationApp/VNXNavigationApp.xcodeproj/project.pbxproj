@@ -1,0 +1,730 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		17E042842E57ED0E00468972 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427F2E57ED0E00468972 /* LoginView.swift */; };
+		17E042852E57ED0E00468972 /* NavigationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427A2E57ED0E00468972 /* NavigationService.swift */; };
+		17E042862E57ED0E00468972 /* NearbyInteractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427B2E57ED0E00468972 /* NearbyInteractionService.swift */; };
+		17E042872E57ED0E00468972 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042782E57ED0E00468972 /* User.swift */; };
+		17E042882E57ED0E00468972 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427C2E57ED0E00468972 /* SupabaseService.swift */; };
+		17E042892E57ED0E00468972 /* VNXNavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042732E57ED0E00468972 /* VNXNavigationApp.swift */; };
+		17E0428A2E57ED0E00468972 /* SupabaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042762E57ED0E00468972 /* SupabaseConfig.swift */; };
+		17E0428B2E57ED0E00468972 /* AnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427E2E57ED0E00468972 /* AnchorView.swift */; };
+		17E0428C2E57ED0E00468972 /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042802E57ED0E00468972 /* RoleSelectionView.swift */; };
+		17E0428D2E57ED0E00468972 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042752E57ED0E00468972 /* ServerConfig.swift */; };
+		17E0428E2E57ED0E00468972 /* TaggerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042812E57ED0E00468972 /* TaggerView.swift */; };
+		17E042942E57EF2C00468972 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17E042932E57EF2C00468972 /* Assets.xcassets */; };
+		17E0429A2E57F21500468972 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 17E042992E57F21500468972 /* Supabase */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17E042572E57EC2C00468972 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17E0423E2E57EC2B00468972 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17E042452E57EC2B00468972;
+			remoteInfo = VNXNavigationApp;
+		};
+		17E042612E57EC2C00468972 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17E0423E2E57EC2B00468972 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17E042452E57EC2B00468972;
+			remoteInfo = VNXNavigationApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		17E042462E57EC2B00468972 /* VNXNavigationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VNXNavigationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		17E042732E57ED0E00468972 /* VNXNavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VNXNavigationApp.swift; sourceTree = "<group>"; };
+		17E042752E57ED0E00468972 /* ServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfig.swift; sourceTree = "<group>"; };
+		17E042762E57ED0E00468972 /* SupabaseConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseConfig.swift; sourceTree = "<group>"; };
+		17E042782E57ED0E00468972 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		17E0427A2E57ED0E00468972 /* NavigationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationService.swift; sourceTree = "<group>"; };
+		17E0427B2E57ED0E00468972 /* NearbyInteractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyInteractionService.swift; sourceTree = "<group>"; };
+		17E0427C2E57ED0E00468972 /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		17E0427E2E57ED0E00468972 /* AnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorView.swift; sourceTree = "<group>"; };
+		17E0427F2E57ED0E00468972 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		17E042802E57ED0E00468972 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionView.swift; sourceTree = "<group>"; };
+		17E042812E57ED0E00468972 /* TaggerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaggerView.swift; sourceTree = "<group>"; };
+		17E042932E57EF2C00468972 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		17E042922E57EDCA00468972 /* Exceptions for "VNXNavigationApp" folder in "VNXNavigationApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 17E042452E57EC2B00468972 /* VNXNavigationApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		17E042482E57EC2B00468972 /* VNXNavigationApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				17E042922E57EDCA00468972 /* Exceptions for "VNXNavigationApp" folder in "VNXNavigationApp" target */,
+			);
+			path = VNXNavigationApp;
+			sourceTree = "<group>";
+		};
+		17E042592E57EC2C00468972 /* VNXNavigationAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = VNXNavigationAppTests;
+			sourceTree = "<group>";
+		};
+		17E042632E57EC2C00468972 /* VNXNavigationAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = VNXNavigationAppUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		17E042432E57EC2B00468972 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17E0429A2E57F21500468972 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17E042532E57EC2C00468972 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17E0425D2E57EC2C00468972 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		17E0423D2E57EC2B00468972 = {
+			isa = PBXGroup;
+			children = (
+				17E042932E57EF2C00468972 /* Assets.xcassets */,
+				17E042832E57ED0E00468972 /* Sources */,
+				17E042482E57EC2B00468972 /* VNXNavigationApp */,
+				17E042592E57EC2C00468972 /* VNXNavigationAppTests */,
+				17E042632E57EC2C00468972 /* VNXNavigationAppUITests */,
+				17E042952E57F18200468972 /* Frameworks */,
+				17E042472E57EC2B00468972 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		17E042472E57EC2B00468972 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17E042462E57EC2B00468972 /* VNXNavigationApp.app */,
+				17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */,
+				17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17E042742E57ED0E00468972 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				17E042732E57ED0E00468972 /* VNXNavigationApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		17E042772E57ED0E00468972 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				17E042752E57ED0E00468972 /* ServerConfig.swift */,
+				17E042762E57ED0E00468972 /* SupabaseConfig.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		17E042792E57ED0E00468972 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				17E042782E57ED0E00468972 /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		17E0427D2E57ED0E00468972 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				17E0427A2E57ED0E00468972 /* NavigationService.swift */,
+				17E0427B2E57ED0E00468972 /* NearbyInteractionService.swift */,
+				17E0427C2E57ED0E00468972 /* SupabaseService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		17E042822E57ED0E00468972 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				17E0427E2E57ED0E00468972 /* AnchorView.swift */,
+				17E0427F2E57ED0E00468972 /* LoginView.swift */,
+				17E042802E57ED0E00468972 /* RoleSelectionView.swift */,
+				17E042812E57ED0E00468972 /* TaggerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		17E042832E57ED0E00468972 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				17E042742E57ED0E00468972 /* App */,
+				17E042772E57ED0E00468972 /* Config */,
+				17E042792E57ED0E00468972 /* Models */,
+				17E0427D2E57ED0E00468972 /* Services */,
+				17E042822E57ED0E00468972 /* Views */,
+			);
+			name = Sources;
+			path = ../Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+		17E042952E57F18200468972 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		17E042452E57EC2B00468972 /* VNXNavigationApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17E0426A2E57EC2C00468972 /* Build configuration list for PBXNativeTarget "VNXNavigationApp" */;
+			buildPhases = (
+				17E042422E57EC2B00468972 /* Sources */,
+				17E042432E57EC2B00468972 /* Frameworks */,
+				17E042442E57EC2B00468972 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				17E042482E57EC2B00468972 /* VNXNavigationApp */,
+			);
+			name = VNXNavigationApp;
+			packageProductDependencies = (
+				17E042992E57F21500468972 /* Supabase */,
+			);
+			productName = VNXNavigationApp;
+			productReference = 17E042462E57EC2B00468972 /* VNXNavigationApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		17E042552E57EC2C00468972 /* VNXNavigationAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17E0426D2E57EC2C00468972 /* Build configuration list for PBXNativeTarget "VNXNavigationAppTests" */;
+			buildPhases = (
+				17E042522E57EC2C00468972 /* Sources */,
+				17E042532E57EC2C00468972 /* Frameworks */,
+				17E042542E57EC2C00468972 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				17E042582E57EC2C00468972 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				17E042592E57EC2C00468972 /* VNXNavigationAppTests */,
+			);
+			name = VNXNavigationAppTests;
+			packageProductDependencies = (
+			);
+			productName = VNXNavigationAppTests;
+			productReference = 17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		17E0425F2E57EC2C00468972 /* VNXNavigationAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17E042702E57EC2C00468972 /* Build configuration list for PBXNativeTarget "VNXNavigationAppUITests" */;
+			buildPhases = (
+				17E0425C2E57EC2C00468972 /* Sources */,
+				17E0425D2E57EC2C00468972 /* Frameworks */,
+				17E0425E2E57EC2C00468972 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				17E042622E57EC2C00468972 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				17E042632E57EC2C00468972 /* VNXNavigationAppUITests */,
+			);
+			name = VNXNavigationAppUITests;
+			packageProductDependencies = (
+			);
+			productName = VNXNavigationAppUITests;
+			productReference = 17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		17E0423E2E57EC2B00468972 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					17E042452E57EC2B00468972 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					17E042552E57EC2C00468972 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 17E042452E57EC2B00468972;
+					};
+					17E0425F2E57EC2C00468972 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 17E042452E57EC2B00468972;
+					};
+				};
+			};
+			buildConfigurationList = 17E042412E57EC2B00468972 /* Build configuration list for PBXProject "VNXNavigationApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 17E0423D2E57EC2B00468972;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				17E042902E57ED5500468972 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				17E042982E57F21500468972 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 17E042472E57EC2B00468972 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				17E042452E57EC2B00468972 /* VNXNavigationApp */,
+				17E042552E57EC2C00468972 /* VNXNavigationAppTests */,
+				17E0425F2E57EC2C00468972 /* VNXNavigationAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		17E042442E57EC2B00468972 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17E042942E57EF2C00468972 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17E042542E57EC2C00468972 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17E0425E2E57EC2C00468972 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		17E042422E57EC2B00468972 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17E042842E57ED0E00468972 /* LoginView.swift in Sources */,
+				17E042852E57ED0E00468972 /* NavigationService.swift in Sources */,
+				17E042862E57ED0E00468972 /* NearbyInteractionService.swift in Sources */,
+				17E042872E57ED0E00468972 /* User.swift in Sources */,
+				17E042882E57ED0E00468972 /* SupabaseService.swift in Sources */,
+				17E042892E57ED0E00468972 /* VNXNavigationApp.swift in Sources */,
+				17E0428A2E57ED0E00468972 /* SupabaseConfig.swift in Sources */,
+				17E0428B2E57ED0E00468972 /* AnchorView.swift in Sources */,
+				17E0428C2E57ED0E00468972 /* RoleSelectionView.swift in Sources */,
+				17E0428D2E57ED0E00468972 /* ServerConfig.swift in Sources */,
+				17E0428E2E57ED0E00468972 /* TaggerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17E042522E57EC2C00468972 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17E0425C2E57EC2C00468972 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17E042582E57EC2C00468972 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17E042452E57EC2B00468972 /* VNXNavigationApp */;
+			targetProxy = 17E042572E57EC2C00468972 /* PBXContainerItemProxy */;
+		};
+		17E042622E57EC2C00468972 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17E042452E57EC2B00468972 /* VNXNavigationApp */;
+			targetProxy = 17E042612E57EC2C00468972 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		17E042682E57EC2C00468972 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		17E042692E57EC2C00468972 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		17E0426B2E57EC2C00468972 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"VNXNavigationApp/Preview Content\"";
+				DEVELOPMENT_TEAM = MR84TJM264;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VNXNavigationApp/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.valuenex.VNXNavigationApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		17E0426C2E57EC2C00468972 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"VNXNavigationApp/Preview Content\"";
+				DEVELOPMENT_TEAM = MR84TJM264;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VNXNavigationApp/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.valuenex.VNXNavigationApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		17E0426E2E57EC2C00468972 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MR84TJM264;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.valuenex.VNXNavigationAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VNXNavigationApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VNXNavigationApp";
+			};
+			name = Debug;
+		};
+		17E0426F2E57EC2C00468972 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MR84TJM264;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.valuenex.VNXNavigationAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VNXNavigationApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VNXNavigationApp";
+			};
+			name = Release;
+		};
+		17E042712E57EC2C00468972 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MR84TJM264;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.valuenex.VNXNavigationAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = VNXNavigationApp;
+			};
+			name = Debug;
+		};
+		17E042722E57EC2C00468972 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MR84TJM264;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.valuenex.VNXNavigationAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = VNXNavigationApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		17E042412E57EC2B00468972 /* Build configuration list for PBXProject "VNXNavigationApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17E042682E57EC2C00468972 /* Debug */,
+				17E042692E57EC2C00468972 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		17E0426A2E57EC2C00468972 /* Build configuration list for PBXNativeTarget "VNXNavigationApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17E0426B2E57EC2C00468972 /* Debug */,
+				17E0426C2E57EC2C00468972 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		17E0426D2E57EC2C00468972 /* Build configuration list for PBXNativeTarget "VNXNavigationAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17E0426E2E57EC2C00468972 /* Debug */,
+				17E0426F2E57EC2C00468972 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		17E042702E57EC2C00468972 /* Build configuration list for PBXNativeTarget "VNXNavigationAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17E042712E57EC2C00468972 /* Debug */,
+				17E042722E57EC2C00468972 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		17E042902E57ED5500468972 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		17E042982E57F21500468972 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase-community/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		17E042992E57F21500468972 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17E042982E57F21500468972 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 17E0423E2E57EC2B00468972 /* Project object */;
+}
