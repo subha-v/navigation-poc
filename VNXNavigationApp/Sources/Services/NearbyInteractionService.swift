@@ -27,7 +27,7 @@ class NearbyInteractionService: NSObject, ObservableObject {
     private var mcAdvertiser: MCNearbyServiceAdvertiser?
     private var mcBrowser: MCNearbyServiceBrowser?
     private let serviceType = "vnxnav-service"  // Must be 1-15 chars, lowercase, no special chars except hyphen
-    private var peerID: MCPeerID!
+    @Published var peerID: MCPeerID?
     private var peerTokens: [MCPeerID: NIDiscoveryToken] = [:]
     private var searchTimer: Timer?
     private var myDiscoveryToken: NIDiscoveryToken?

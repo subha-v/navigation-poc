@@ -13,6 +13,25 @@ struct AnchorView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
+            // Debug Info
+            VStack(alignment: .leading, spacing: 5) {
+                Text("DEBUG INFO")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Text("Mode: ANCHOR")
+                    .font(.caption)
+                Text("Service: vnxnav-service")
+                    .font(.caption)
+                Text("PeerID: \(nearbyInteractionService.peerID?.displayName ?? "Not set")")
+                    .font(.caption)
+                Text("Advertising: \(nearbyInteractionService.isRunning ? "YES" : "NO")")
+                    .font(.caption)
+                    .foregroundColor(nearbyInteractionService.isRunning ? .green : .red)
+            }
+            .padding()
+            .background(Color.yellow.opacity(0.2))
+            .cornerRadius(8)
+            
             // Status indicator
             VStack(spacing: 15) {
                 // Broadcasting status
