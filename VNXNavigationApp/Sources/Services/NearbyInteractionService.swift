@@ -27,6 +27,7 @@ class NearbyInteractionService: NSObject, ObservableObject {
     private let peerID = MCPeerID(displayName: UIDevice.current.name)
     private var peerTokens: [MCPeerID: NIDiscoveryToken] = [:]
     private var searchTimer: Timer?
+    private var myDiscoveryToken: NIDiscoveryToken?
     
     override private init() {
         super.init()
@@ -35,16 +36,30 @@ class NearbyInteractionService: NSObject, ObservableObject {
     
     func startSession() {
         guard NISession.isSupported else {
-            print("Nearby Interaction not supported on this device")
+            print("❌ Nearby Interaction not supported on this device")
             return
         }
+        
+        print("✅ Starting Nearby Interaction session")
+        print("📱 Device name: \(peerID.displayName)")
+        print("📡 Service type: \(serviceType)")
         
         niSession = NISession()
         niSession?.delegate = self
         
+        // Generate and store our discovery token
+        if let token = niSession?.discoveryToken {
+            myDiscoveryToken = token
+            print("🔑 Discovery token generated successfully")
+        } else {
+            print("⚠️ Discovery token not yet available")
+        }
+        
         // Start advertising/browsing
         mcAdvertiser?.startAdvertisingPeer()
         mcBrowser?.startBrowsingForPeers()
+        
+        print("🔍 Started advertising and browsing for peers")
         
         isRunning = true
         connectionState = .searching
@@ -55,6 +70,7 @@ class NearbyInteractionService: NSObject, ObservableObject {
             Task { @MainActor in
                 if self.connectionState == .searching {
                     self.connectionState = .disconnected
+                    print("⏱️ Search timeout - no peers found")
                 }
             }
         }
@@ -92,6 +108,7 @@ extension NearbyInteractionService: NISessionDelegate {
         Task { @MainActor in
             guard let object = nearbyObjects.first else { return }
             
+            print("📏 Distance update: \(object.distance ?? -1) meters")
             self.distance = object.distance
             self.direction = object.direction
         }
@@ -99,9 +116,27 @@ extension NearbyInteractionService: NISessionDelegate {
     
     nonisolated func session(_ session: NISession, didRemove nearbyObjects: [NINearbyObject], reason: NINearbyObject.RemovalReason) {
         Task { @MainActor in
+            print("🔴 Nearby object removed, reason: \(reason.rawValue)")
             self.distance = nil
             self.direction = nil
         }
+    }
+    
+    nonisolated func session(_ session: NISession, didGenerateShareableConfigurationData data: Data, for object: NINearbyObject) {
+        // This is called when generating shareable configuration data
+        print("📊 Generated shareable configuration data")
+    }
+    
+    nonisolated func sessionWasSuspended(_ session: NISession) {
+        print("⏸️ NISession was suspended")
+    }
+    
+    nonisolated func sessionSuspensionEnded(_ session: NISession) {
+        print("▶️ NISession suspension ended")
+    }
+    
+    nonisolated func session(_ session: NISession, didInvalidateWith error: Error) {
+        print("❌ NISession invalidated with error: \(error)")
     }
 }
 
@@ -109,20 +144,27 @@ extension NearbyInteractionService: NISessionDelegate {
 extension NearbyInteractionService: MCSessionDelegate {
     nonisolated func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         Task { @MainActor in
+            print("🔄 Peer \(peerID.displayName) state changed to: \(state == .connected ? "Connected" : state == .connecting ? "Connecting" : "Not Connected")")
+            
             if state == .connected {
+                print("✅ Successfully connected to peer: \(peerID.displayName)")
                 if !self.connectedPeers.contains(peerID) {
                     self.connectedPeers.append(peerID)
                 }
                 
                 // Send our discovery token to the newly connected peer
-                if let token = self.niSession?.discoveryToken {
+                // First try to get a fresh token, fall back to stored one
+                if let token = self.niSession?.discoveryToken ?? self.myDiscoveryToken {
                     do {
                         let tokenData = try NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true)
                         try await self.mcSession?.send(tokenData, toPeers: [peerID], with: .reliable)
-                        print("Sent discovery token to \(peerID.displayName)")
+                        print("📤 Sent discovery token to \(peerID.displayName)")
+                        print("📊 Token size: \(tokenData.count) bytes")
                     } catch {
-                        print("Failed to send discovery token: \(error)")
+                        print("❌ Failed to send discovery token: \(error)")
                     }
+                } else {
+                    print("⚠️ No discovery token available to send - NISession might not be properly initialized")
                 }
             } else if state == .notConnected {
                 self.connectedPeers.removeAll { $0 == peerID }
@@ -141,23 +183,35 @@ extension NearbyInteractionService: MCSessionDelegate {
     nonisolated func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         // Handle discovery token exchange
         Task { @MainActor in
+            print("📥 Received data from \(peerID.displayName), size: \(data.count) bytes")
+            
             do {
                 if let discoveryToken = try NSKeyedUnarchiver.unarchivedObject(ofClass: NIDiscoveryToken.self, from: data) {
+                    print("✅ Successfully decoded discovery token from \(peerID.displayName)")
+                    
                     // Store peer token
                     self.peerTokens[peerID] = discoveryToken
                     
+                    // Make sure we have our own NISession
+                    guard let niSession = self.niSession else {
+                        print("❌ No NISession available to configure")
+                        return
+                    }
+                    
                     // Configure and run NISession with peer token
                     let config = NINearbyPeerConfiguration(peerToken: discoveryToken)
-                    self.niSession?.run(config)
+                    niSession.run(config)
                     
                     // Update connection state
                     self.connectionState = .connected
                     self.searchTimer?.invalidate()
                     
-                    print("Configured NISession with peer token from \(peerID.displayName)")
+                    print("🎯 Configured NISession with peer token from \(peerID.displayName)")
+                    print("🔄 NISession is now running with peer configuration")
                 }
             } catch {
-                print("Failed to decode discovery token: \(error)")
+                print("❌ Failed to decode discovery token: \(error)")
+                print("📊 Data size was: \(data.count) bytes")
             }
         }
     }
@@ -180,12 +234,17 @@ extension NearbyInteractionService: MCNearbyServiceAdvertiserDelegate {
 extension NearbyInteractionService: MCNearbyServiceBrowserDelegate {
     nonisolated func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
         Task { @MainActor in
-            guard let session = self.mcSession else { return }
+            print("🔍 Found peer: \(peerID.displayName)")
+            guard let session = self.mcSession else { 
+                print("❌ No MC session available")
+                return 
+            }
+            print("📤 Inviting peer: \(peerID.displayName)")
             browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
         }
     }
     
     nonisolated func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        // Handle lost peer
+        print("📵 Lost peer: \(peerID.displayName)")
     }
 }

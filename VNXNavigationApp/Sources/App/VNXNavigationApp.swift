@@ -1,11 +1,21 @@
 import SwiftUI
 import Supabase
+import NearbyInteraction
 
 @main
 struct VNXNavigationApp: App {
     @StateObject private var supabaseService = SupabaseService.shared
     @StateObject private var navigationService = NavigationService.shared
     @StateObject private var nearbyInteractionService = NearbyInteractionService.shared
+    
+    init() {
+        // Check Nearby Interaction support
+        if NISession.isSupported {
+            print("✅ Device supports Nearby Interaction")
+        } else {
+            print("❌ Device does NOT support Nearby Interaction")
+        }
+    }
     
     var body: some Scene {
         WindowGroup {
