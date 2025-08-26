@@ -19,8 +19,8 @@ class SupabaseService: ObservableObject {
         }
         
         self.client = SupabaseClient(
-            clientURL: clientURL,
-            clientKey: SupabaseConfig.anonKey
+            supabaseURL: clientURL,
+            supabaseKey: SupabaseConfig.anonKey
         )
         
         Task {
@@ -90,7 +90,7 @@ class SupabaseService: ObservableObject {
     func signOut() async {
         do {
             try await client.auth.signOut()
-            try? await GoogleAuthService.shared.signOut()
+            GoogleAuthService.shared.signOut()
             isAuthenticated = false
             currentUser = nil
         } catch {

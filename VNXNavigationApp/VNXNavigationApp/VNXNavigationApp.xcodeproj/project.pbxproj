@@ -310,6 +310,7 @@
 			packageReferences = (
 				17E042902E57ED5500468972 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				17E042982E57F21500468972 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				1737C0DE2E5E5F4500AB4982 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 17E042472E57EC2B00468972 /* Products */;
@@ -700,6 +701,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1737C0DE2E5E5F4500AB4982 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		17E042902E57ED5500468972 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
