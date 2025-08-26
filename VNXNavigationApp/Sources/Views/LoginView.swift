@@ -54,6 +54,38 @@ struct LoginView: View {
             .padding(.horizontal)
             .disabled(supabaseService.isLoading)
             
+            // Divider
+            HStack {
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(.gray.opacity(0.3))
+                Text("OR")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(.gray.opacity(0.3))
+            }
+            .padding(.horizontal)
+            
+            // Google Sign In Button
+            Button(action: signInWithGoogle) {
+                HStack(spacing: 12) {
+                    Image(systemName: "globe")
+                        .font(.title2)
+                    
+                    Text("Continue with Google")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.red)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            .padding(.horizontal)
+            .disabled(supabaseService.isLoading)
+            
             Button(action: { isSignUp.toggle() }) {
                 Text(isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up")
                     .foregroundColor(.blue)
@@ -87,6 +119,26 @@ struct LoginView: View {
                 }
             } catch {
                 supabaseService.errorMessage = error.localizedDescription
+            }
+        }
+    }
+    
+    private func signInWithGoogle() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            supabaseService.errorMessage = "Cannot find root view controller"
+            showError = true
+            return
+        }
+        
+        Task {
+            do {
+                if let user = try await GoogleAuthService.shared.signInWithGoogle(presenting: rootViewController) {
+                    await supabaseService.setCurrentUser(user)
+                }
+            } catch {
+                supabaseService.errorMessage = error.localizedDescription
+                showError = true
             }
         }
     }

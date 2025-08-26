@@ -2,6 +2,11 @@ import SwiftUI
 
 struct RoleSelectionView: View {
     @EnvironmentObject var supabaseService: SupabaseService
+    @Binding var user: User?
+    
+    init(user: Binding<User?> = .constant(nil)) {
+        self._user = user
+    }
     
     var body: some View {
         VStack(spacing: 30) {
@@ -76,7 +81,24 @@ struct RoleButton: View {
     
     private func selectRole() {
         Task {
-            supabaseService.currentUser?.role = role
+            // Update the user's role in the database
+            if var currentUser = supabaseService.currentUser {
+                currentUser.role = role
+                
+                do {
+                    // Update in database
+                    try await supabaseService.client
+                        .from("users")
+                        .update(["role": role.rawValue])
+                        .eq("id", value: currentUser.id.uuidString)
+                        .execute()
+                    
+                    // Update local state
+                    await supabaseService.setCurrentUser(currentUser)
+                } catch {
+                    print("Failed to update role: \(error)")
+                }
+            }
         }
     }
 }

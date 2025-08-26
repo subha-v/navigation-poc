@@ -34,10 +34,16 @@ struct ContentView: View {
         NavigationView {
             if supabaseService.isAuthenticated {
                 if let user = supabaseService.currentUser {
-                    if user.role == .anchor {
-                        AnchorView()
+                    if let role = user.role {
+                        // User has selected a role
+                        if role == .anchor {
+                            AnchorView()
+                        } else {
+                            TaggerView()
+                        }
                     } else {
-                        TaggerView()
+                        // User needs to select a role
+                        RoleSelectionView()
                     }
                 } else {
                     RoleSelectionView()

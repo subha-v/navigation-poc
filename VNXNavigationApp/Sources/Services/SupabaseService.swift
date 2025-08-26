@@ -11,16 +11,16 @@ class SupabaseService: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let supabase: SupabaseClient
+    let client: SupabaseClient  // Make public for GoogleAuthService
     
     private init() {
-        guard let supabaseURL = URL(string: SupabaseConfig.url) else {
+        guard let clientURL = URL(string: SupabaseConfig.url) else {
             fatalError("Invalid Supabase URL")
         }
         
-        self.supabase = SupabaseClient(
-            supabaseURL: supabaseURL,
-            supabaseKey: SupabaseConfig.anonKey
+        self.client = SupabaseClient(
+            clientURL: clientURL,
+            clientKey: SupabaseConfig.anonKey
         )
         
         Task {
@@ -30,7 +30,7 @@ class SupabaseService: ObservableObject {
     
     func checkAuthStatus() async {
         do {
-            let session = try await supabase.auth.session
+            let session = try await client.auth.session
             isAuthenticated = true
             let userId = session.user.id
             await fetchUserProfile(userId: userId)
@@ -46,7 +46,7 @@ class SupabaseService: ObservableObject {
         
         defer { isLoading = false }
         
-        let authResponse = try await supabase.auth.signUp(
+        let authResponse = try await client.auth.signUp(
             email: email,
             password: password,
             data: [:]
@@ -62,7 +62,7 @@ class SupabaseService: ObservableObject {
             createdAt: Date()
         )
         
-        try await supabase
+        try await client
             .from("users")
             .insert(newUser)
             .execute()
@@ -77,7 +77,7 @@ class SupabaseService: ObservableObject {
         
         defer { isLoading = false }
         
-        let session = try await supabase.auth.signIn(
+        let session = try await client.auth.signIn(
             email: email,
             password: password
         )
@@ -89,7 +89,8 @@ class SupabaseService: ObservableObject {
     
     func signOut() async {
         do {
-            try await supabase.auth.signOut()
+            try await client.auth.signOut()
+            try? await GoogleAuthService.shared.signOut()
             isAuthenticated = false
             currentUser = nil
         } catch {
@@ -97,9 +98,14 @@ class SupabaseService: ObservableObject {
         }
     }
     
+    func setCurrentUser(_ user: User) async {
+        self.currentUser = user
+        self.isAuthenticated = true
+    }
+    
     private func fetchUserProfile(userId: UUID) async {
         do {
-            let response = try await supabase
+            let response = try await client
                 .from("users")
                 .select()
                 .eq("id", value: userId.uuidString)
