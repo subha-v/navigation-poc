@@ -1,6 +1,7 @@
 import SwiftUI
 import Supabase
 import NearbyInteraction
+import GoogleSignIn
 
 @main
 struct VNXNavigationApp: App {
@@ -15,6 +16,9 @@ struct VNXNavigationApp: App {
         } else {
             print("❌ Device does NOT support Nearby Interaction")
         }
+        
+        // Configure Google Sign-In
+        GoogleAuthService.shared.configureGoogleSignIn()
     }
     
     var body: some Scene {
@@ -23,6 +27,9 @@ struct VNXNavigationApp: App {
                 .environmentObject(supabaseService)
                 .environmentObject(navigationService)
                 .environmentObject(nearbyInteractionService)
+                .onOpenURL { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                }
         }
     }
 }

@@ -14,14 +14,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/supabase-community/supabase-swift.git", from: "2.0.0"),
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0")
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0"),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0")
     ],
     targets: [
         .target(
             name: "VNXNavigationApp",
             dependencies: [
                 .product(name: "Supabase", package: "supabase-swift"),
-                .product(name: "Alamofire", package: "Alamofire")
+                .product(name: "Alamofire", package: "Alamofire"),
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
             ],
             path: "Sources"
         )

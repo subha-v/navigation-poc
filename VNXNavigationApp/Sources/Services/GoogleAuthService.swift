@@ -1,8 +1,8 @@
 import Foundation
+import GoogleSignIn
 import Supabase
 import UIKit
 
-// Simplified Google Auth Service - requires Google OAuth setup in Supabase Dashboard
 @MainActor
 class GoogleAuthService: ObservableObject {
     static let shared = GoogleAuthService()
@@ -11,30 +11,124 @@ class GoogleAuthService: ObservableObject {
     
     private init() {}
     
-    // For now, we'll use a simplified flow
-    // To enable Google Sign-In:
-    // 1. Go to Supabase Dashboard > Authentication > Providers
-    // 2. Enable Google provider
-    // 3. Add Google Client ID and Secret
-    // 4. Configure redirect URLs
-    
-    func signInWithGoogle(presenting: UIViewController) async throws -> User? {
-        // Placeholder - actual implementation requires Google OAuth setup
-        print("Google Sign-In requires configuration in Supabase Dashboard")
-        throw NSError(domain: "GoogleAuth", code: -1, 
-                     userInfo: [NSLocalizedDescriptionKey: "Google Sign-In not configured. Please use email/password authentication."])
+    func signInWithGoogle(presenting viewController: UIViewController) async throws -> User? {
+        return try await withCheckedThrowingContinuation { continuation in
+            GIDSignIn.sharedInstance.signIn(withPresenting: viewController) { [weak self] result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                guard let result = result,
+                      let idToken = result.user.idToken?.tokenString else {
+                    continuation.resume(throwing: AuthError.invalidCredentials)
+                    return
+                }
+                
+                let user = result.user
+                let email = user.profile?.email ?? ""
+                let name = user.profile?.name ?? ""
+                
+                Task {
+                    do {
+                        let authResponse = try await self?.supabase.auth.signInWithIdToken(
+                            credentials: .init(
+                                provider: .google,
+                                idToken: idToken
+                            )
+                        )
+                        
+                        guard let authUser = authResponse?.user else {
+                            continuation.resume(throwing: AuthError.invalidCredentials)
+                            return
+                        }
+                        
+                        let vnxUser = User(
+                            id: authUser.id,
+                            email: email,
+                            name: name,
+                            role: nil
+                        )
+                        
+                        continuation.resume(returning: vnxUser)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
     }
     
-    func signOut() async throws {
-        // Sign out handled by SupabaseService
+    func signOut() {
+        GIDSignIn.sharedInstance.signOut()
     }
     
     func restorePreviousSignIn() async throws -> User? {
-        return nil
+        return try await withCheckedThrowingContinuation { continuation in
+            GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                guard let user = user,
+                      let idToken = user.idToken?.tokenString,
+                      let email = user.profile?.email else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                let name = user.profile?.name ?? ""
+                
+                Task { [weak self] in
+                    do {
+                        let authResponse = try await self?.supabase.auth.signInWithIdToken(
+                            credentials: .init(
+                                provider: .google,
+                                idToken: idToken
+                            )
+                        )
+                        
+                        guard let authUser = authResponse?.user else {
+                            continuation.resume(returning: nil)
+                            return
+                        }
+                        
+                        let vnxUser = User(
+                            id: authUser.id,
+                            email: email,
+                            name: name,
+                            role: nil
+                        )
+                        
+                        continuation.resume(returning: vnxUser)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
     }
     
     func configureGoogleSignIn() {
-        // Configuration will be done when Google OAuth is set up
-        print("Google Sign-In configuration placeholder")
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+              let plist = NSDictionary(contentsOfFile: path),
+              let clientId = plist["CLIENT_ID"] as? String else {
+            print("Warning: GoogleService-Info.plist not found or invalid")
+            return
+        }
+        
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientId)
+    }
+}
+
+enum AuthError: LocalizedError {
+    case invalidCredentials
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidCredentials:
+            return "Invalid Google Sign-In credentials"
+        }
     }
 }
