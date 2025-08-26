@@ -43,8 +43,8 @@ class NearbyInteractionService: NSObject, ObservableObject {
         }
         
         logger.info("✅ Starting Nearby Interaction session")
-        logger.info("📱 Device name: \(peerID.displayName)")
-        logger.info("📡 Service type: \(serviceType)")
+        logger.info("📱 Device name: \(self.peerID.displayName)")
+        logger.info("📡 Service type: \(self.serviceType)")
         
         niSession = NISession()
         niSession?.delegate = self
@@ -159,7 +159,7 @@ extension NearbyInteractionService: MCSessionDelegate {
                 if let token = self.niSession?.discoveryToken ?? self.myDiscoveryToken {
                     do {
                         let tokenData = try NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true)
-                        try await self.mcSession?.send(tokenData, toPeers: [peerID], with: .reliable)
+                        try self.mcSession?.send(tokenData, toPeers: [peerID], with: .reliable)
                         self.logger.info("📤 Sent discovery token to \(peerID.displayName)")
                         self.logger.debug("📊 Token size: \(tokenData.count) bytes")
                     } catch {
