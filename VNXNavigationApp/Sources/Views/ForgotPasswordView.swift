@@ -2,10 +2,12 @@ import SwiftUI
 
 struct ForgotPasswordView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var authService = AuthService.shared
     @State private var email = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isLoading = false
+    @State private var resetSuccess = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -70,7 +72,7 @@ struct ForgotPasswordView: View {
         }
         .alert("Password Reset", isPresented: $showAlert) {
             Button("OK", role: .cancel) {
-                if alertMessage.contains("sent") {
+                if resetSuccess {
                     dismiss()
                 }
             }
@@ -83,20 +85,23 @@ struct ForgotPasswordView: View {
         guard !email.isEmpty else { return }
         
         isLoading = true
+        resetSuccess = false
         
         Task {
             do {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+                try await authService.resetPassword(email: email)
                 
                 await MainActor.run {
                     isLoading = false
-                    alertMessage = "Password reset functionality will be implemented with your backend"
+                    alertMessage = "Password reset email sent! Please check your inbox."
+                    resetSuccess = true
                     showAlert = true
                 }
             } catch {
                 await MainActor.run {
                     isLoading = false
-                    alertMessage = "An error occurred"
+                    alertMessage = error.localizedDescription
+                    resetSuccess = false
                     showAlert = true
                 }
             }

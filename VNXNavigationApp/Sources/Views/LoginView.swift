@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    @StateObject private var authService = AuthService.shared
     @State private var email = ""
     @State private var password = ""
     @State private var showSignup = false
@@ -95,17 +96,15 @@ struct LoginView: View {
         
         Task {
             do {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+                try await authService.signIn(email: email, password: password)
                 
                 await MainActor.run {
                     isLoading = false
-                    alertMessage = "Login functionality will be implemented with your backend"
-                    showAlert = true
                 }
             } catch {
                 await MainActor.run {
                     isLoading = false
-                    alertMessage = "An error occurred"
+                    alertMessage = error.localizedDescription
                     showAlert = true
                 }
             }

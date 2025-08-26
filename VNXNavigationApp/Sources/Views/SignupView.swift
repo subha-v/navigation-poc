@@ -2,10 +2,12 @@ import SwiftUI
 
 struct SignupView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var authService = AuthService.shared
     @State private var fullName = ""
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
+    @State private var selectedRole: UserRole = .navigator
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isLoading = false
@@ -40,6 +42,19 @@ struct SignupView: View {
                 SecureField("Confirm Password", text: $confirmPassword)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .textContentType(.newPassword)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Select your role:")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                    
+                    Picker("Role", selection: $selectedRole) {
+                        ForEach(UserRole.allCases, id: \.self) { role in
+                            Text(role.displayName).tag(role)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                }
             }
             .padding(.horizontal, 32)
             .padding(.top, 32)
@@ -114,17 +129,20 @@ struct SignupView: View {
         
         Task {
             do {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+                try await authService.signUp(
+                    email: email,
+                    password: password,
+                    fullName: fullName,
+                    role: selectedRole
+                )
                 
                 await MainActor.run {
                     isLoading = false
-                    alertMessage = "Signup functionality will be implemented with your backend"
-                    showAlert = true
                 }
             } catch {
                 await MainActor.run {
                     isLoading = false
-                    alertMessage = "An error occurred"
+                    alertMessage = error.localizedDescription
                     showAlert = true
                 }
             }
