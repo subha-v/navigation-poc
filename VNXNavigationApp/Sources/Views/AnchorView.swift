@@ -120,7 +120,7 @@ struct AnchorView: View {
         if nearbyInteractionService.isRunning {
             nearbyInteractionService.stopSession()
         } else {
-            nearbyInteractionService.startSession()
+            nearbyInteractionService.startAsAnchor()
         }
     }
 }

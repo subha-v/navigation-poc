@@ -16,7 +16,7 @@ class NavigationService: ObservableObject {
     
     func startNavigation() {
         isNavigating = true
-        nearbyInteractionService.startSession()
+        nearbyInteractionService.startAsNavigator()
     }
     
     func stopNavigation() {

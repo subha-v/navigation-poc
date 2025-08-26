@@ -14,6 +14,7 @@ class NearbyInteractionService: NSObject, ObservableObject {
     @Published var distance: Float?
     @Published var direction: simd_float3?
     @Published var connectionState: ConnectionState = .disconnected
+    var isAnchorMode: Bool = false  // Set this to determine behavior
     
     enum ConnectionState {
         case disconnected
@@ -25,15 +26,29 @@ class NearbyInteractionService: NSObject, ObservableObject {
     private var mcSession: MCSession?
     private var mcAdvertiser: MCNearbyServiceAdvertiser?
     private var mcBrowser: MCNearbyServiceBrowser?
-    private let serviceType = "vnx-nav"
-    private let peerID = MCPeerID(displayName: UIDevice.current.name)
+    private let serviceType = "vnxnav-service"  // Must be 1-15 chars, lowercase, no special chars except hyphen
+    private var peerID: MCPeerID!
     private var peerTokens: [MCPeerID: NIDiscoveryToken] = [:]
     private var searchTimer: Timer?
     private var myDiscoveryToken: NIDiscoveryToken?
     
     override private init() {
         super.init()
+        // Don't setup here - wait until we know the mode
+    }
+    
+    func startAsAnchor() {
+        isAnchorMode = true
+        peerID = MCPeerID(displayName: "\(UIDevice.current.name)-Anchor")
         setupMultipeerConnectivity()
+        startSession()
+    }
+    
+    func startAsNavigator() {
+        isAnchorMode = false
+        peerID = MCPeerID(displayName: "\(UIDevice.current.name)-Navigator")
+        setupMultipeerConnectivity()
+        startSession()
     }
     
     func startSession() {
@@ -44,11 +59,14 @@ class NearbyInteractionService: NSObject, ObservableObject {
         }
         
         print("✅ VNXNavigationApp: Starting NI session")
+        print("📱 VNXNavigationApp Device: \(peerID.displayName)")
+        print("📡 VNXNavigationApp Service: \(serviceType)")
+        print("🎭 VNXNavigationApp Mode: \(isAnchorMode ? "ANCHOR" : "NAVIGATOR")")
+        
         logger.info("✅ Starting Nearby Interaction session")
         logger.info("📱 Device name: \(self.peerID.displayName)")
         logger.info("📡 Service type: \(self.serviceType)")
-        print("📱 VNXNavigationApp Device: \(self.peerID.displayName)")
-        print("📡 VNXNavigationApp Service: \(self.serviceType)")
+        logger.info("🎭 Mode: \(self.isAnchorMode ? "ANCHOR" : "NAVIGATOR")")
         
         niSession = NISession()
         niSession?.delegate = self
@@ -61,13 +79,19 @@ class NearbyInteractionService: NSObject, ObservableObject {
             logger.warning("⚠️ Discovery token not yet available")
         }
         
-        // Start advertising/browsing
-        print("🔎 VNXNavigationApp: About to start advertising/browsing")
-        mcAdvertiser?.startAdvertisingPeer()
-        mcBrowser?.startBrowsingForPeers()
+        // Start advertising/browsing based on mode
+        if isAnchorMode {
+            print("⚓ VNXNavigationApp: Starting as ANCHOR - advertising only")
+            mcAdvertiser?.startAdvertisingPeer()
+            // Anchors don't browse - they wait for connections
+        } else {
+            print("🧭 VNXNavigationApp: Starting as NAVIGATOR - browsing only")
+            mcBrowser?.startBrowsingForPeers()
+            // Navigators don't advertise - they find anchors
+        }
         
-        print("🔍 VNXNavigationApp: Started advertising and browsing")
-        logger.info("🔍 Started advertising and browsing for peers")
+        print("🔍 VNXNavigationApp: Started in \(isAnchorMode ? "ANCHOR" : "NAVIGATOR") mode")
+        logger.info("🔍 Started in \(self.isAnchorMode ? "ANCHOR" : "NAVIGATOR") mode")
         
         isRunning = true
         connectionState = .searching
