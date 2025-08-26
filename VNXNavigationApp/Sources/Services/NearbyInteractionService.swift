@@ -39,12 +39,16 @@ class NearbyInteractionService: NSObject, ObservableObject {
     func startSession() {
         guard NISession.isSupported else {
             logger.error("❌ Nearby Interaction not supported on this device")
+            print("❌ NI not supported")
             return
         }
         
+        print("✅ VNXNavigationApp: Starting NI session")
         logger.info("✅ Starting Nearby Interaction session")
         logger.info("📱 Device name: \(self.peerID.displayName)")
         logger.info("📡 Service type: \(self.serviceType)")
+        print("📱 VNXNavigationApp Device: \(self.peerID.displayName)")
+        print("📡 VNXNavigationApp Service: \(self.serviceType)")
         
         niSession = NISession()
         niSession?.delegate = self
@@ -58,9 +62,11 @@ class NearbyInteractionService: NSObject, ObservableObject {
         }
         
         // Start advertising/browsing
+        print("🔎 VNXNavigationApp: About to start advertising/browsing")
         mcAdvertiser?.startAdvertisingPeer()
         mcBrowser?.startBrowsingForPeers()
         
+        print("🔍 VNXNavigationApp: Started advertising and browsing")
         logger.info("🔍 Started advertising and browsing for peers")
         
         isRunning = true
@@ -146,6 +152,7 @@ extension NearbyInteractionService: NISessionDelegate {
 extension NearbyInteractionService: MCSessionDelegate {
     nonisolated func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         Task { @MainActor in
+            print("🔄 VNXNavigationApp: Peer \(peerID.displayName) state: \(state == .connected ? "Connected" : state == .connecting ? "Connecting" : "Not Connected")")
             self.logger.info("🔄 Peer \(peerID.displayName) state changed to: \(state == .connected ? "Connected" : state == .connecting ? "Connecting" : "Not Connected")")
             
             if state == .connected {
@@ -236,11 +243,13 @@ extension NearbyInteractionService: MCNearbyServiceAdvertiserDelegate {
 extension NearbyInteractionService: MCNearbyServiceBrowserDelegate {
     nonisolated func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
         Task { @MainActor in
+            print("🔍 VNXNavigationApp: Found peer: \(peerID.displayName)")
             self.logger.info("🔍 Found peer: \(peerID.displayName)")
             guard let session = self.mcSession else { 
                 self.logger.error("❌ No MC session available")
                 return 
             }
+            print("📤 VNXNavigationApp: Inviting peer: \(peerID.displayName)")
             self.logger.info("📤 Inviting peer: \(peerID.displayName)")
             browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
         }
