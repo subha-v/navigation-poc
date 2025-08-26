@@ -94,6 +94,10 @@ class AuthService: ObservableObject {
             isLoading = false
         } catch {
             isLoading = false
+            print("🔴 Firebase Signup Error: \(error)")
+            print("🔴 Error code: \((error as NSError).code)")
+            print("🔴 Error domain: \((error as NSError).domain)")
+            print("🔴 Error userInfo: \((error as NSError).userInfo)")
             errorMessage = error.localizedDescription
             throw error
         }
