@@ -2,6 +2,7 @@ import Foundation
 import CoreLocation
 import SwiftUI
 import simd
+import NearbyInteraction
 
 @MainActor
 class NavigationService: ObservableObject {
@@ -9,13 +10,26 @@ class NavigationService: ObservableObject {
     
     @Published var isNavigating = false
     @Published var arrowRotation: Double = 0
+    @Published var permissionStatus: String = "Not checked"
     
     private let nearbyInteractionService = NearbyInteractionService.shared
     
     private init() {}
     
+    func checkPermissions() {
+        // Check if NearbyInteraction is supported
+        if NISession.isSupported {
+            permissionStatus = "NearbyInteraction supported"
+            print("✅ VNXNavigationApp: NearbyInteraction is supported on this device")
+        } else {
+            permissionStatus = "NearbyInteraction NOT supported"
+            print("❌ VNXNavigationApp: NearbyInteraction is NOT supported on this device")
+        }
+    }
+    
     func startNavigation() {
         isNavigating = true
+        checkPermissions()
         nearbyInteractionService.startAsNavigator()
     }
     

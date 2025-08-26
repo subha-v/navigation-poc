@@ -14,26 +14,9 @@ struct TaggerView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            // Debug Info
-            VStack(alignment: .leading, spacing: 5) {
-                Text("DEBUG INFO")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                Text("Mode: NAVIGATOR")
-                    .font(.caption)
-                Text("Service: vnxnav-service")
-                    .font(.caption)
-                Text("PeerID: \(nearbyInteractionService.peerID?.displayName ?? "Not set")")
-                    .font(.caption)
-                Text("Browsing: \(navigationService.isNavigating ? "YES" : "NO")")
-                    .font(.caption)
-                    .foregroundColor(navigationService.isNavigating ? .green : .red)
-                Text("State: \(String(describing: nearbyInteractionService.connectionState))")
-                    .font(.caption)
-            }
-            .padding()
-            .background(Color.yellow.opacity(0.2))
-            .cornerRadius(8)
+            // Comprehensive Debug View
+            DebugView()
+                .padding(.horizontal)
             
             // Status display
             StatusDisplayView()

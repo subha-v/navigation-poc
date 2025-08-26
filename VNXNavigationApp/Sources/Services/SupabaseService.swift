@@ -111,8 +111,11 @@ class SupabaseService: ObservableObject {
     }
     
     func setCurrentUser(_ user: User) async {
-        self.currentUser = user
-        self.isAuthenticated = true
+        await MainActor.run {
+            self.currentUser = user
+            self.isAuthenticated = true
+            print("DEBUG: Set current user with role: \(user.role?.rawValue ?? "nil")")
+        }
     }
     
     private func fetchUserProfile(userId: UUID) async {
