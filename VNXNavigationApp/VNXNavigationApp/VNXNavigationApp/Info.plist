@@ -6,6 +6,13 @@
 	<string>This app uses Nearby Interaction to help you navigate to other phones acting as anchors.</string>
 	<key>NSNearbyInteractionUsageDescription</key>
 	<string>This app uses Ultra-Wideband technology to measure distance and direction to nearby anchor devices for navigation.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app needs to discover and connect to nearby phones on your local network for navigation.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_vnxnav-service._tcp</string>
+		<string>_vnxnav-service._udp</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>nearby-interaction</string>

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1735F1A52E5E60CE0095DD02 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1735F1A42E5E60CE0095DD02 /* GoogleSignIn */; };
+		1735F1A72E5E60CE0095DD02 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1735F1A62E5E60CE0095DD02 /* GoogleSignInSwift */; };
+		1735F1B42E5E61800095DD02 /* GoogleAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1B32E5E61800095DD02 /* GoogleAuthService.swift */; };
 		17E042842E57ED0E00468972 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427F2E57ED0E00468972 /* LoginView.swift */; };
 		17E042852E57ED0E00468972 /* NavigationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427A2E57ED0E00468972 /* NavigationService.swift */; };
 		17E042862E57ED0E00468972 /* NearbyInteractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427B2E57ED0E00468972 /* NearbyInteractionService.swift */; };
@@ -40,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1735F1B32E5E61800095DD02 /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthService.swift; sourceTree = "<group>"; };
 		17E042462E57EC2B00468972 /* VNXNavigationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VNXNavigationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,7 +97,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1735F1A72E5E60CE0095DD02 /* GoogleSignInSwift in Frameworks */,
 				17E0429A2E57F21500468972 /* Supabase in Frameworks */,
+				1735F1A52E5E60CE0095DD02 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +171,7 @@
 		17E0427D2E57ED0E00468972 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				1735F1B32E5E61800095DD02 /* GoogleAuthService.swift */,
 				17E0427A2E57ED0E00468972 /* NavigationService.swift */,
 				17E0427B2E57ED0E00468972 /* NearbyInteractionService.swift */,
 				17E0427C2E57ED0E00468972 /* SupabaseService.swift */,
@@ -224,6 +231,8 @@
 			name = VNXNavigationApp;
 			packageProductDependencies = (
 				17E042992E57F21500468972 /* Supabase */,
+				1735F1A42E5E60CE0095DD02 /* GoogleSignIn */,
+				1735F1A62E5E60CE0095DD02 /* GoogleSignInSwift */,
 			);
 			productName = VNXNavigationApp;
 			productReference = 17E042462E57EC2B00468972 /* VNXNavigationApp.app */;
@@ -310,7 +319,7 @@
 			packageReferences = (
 				17E042902E57ED5500468972 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				17E042982E57F21500468972 /* XCRemoteSwiftPackageReference "supabase-swift" */,
-				1737C0DE2E5E5F4500AB4982 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				1735F1A32E5E60CE0095DD02 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 17E042472E57EC2B00468972 /* Products */;
@@ -356,6 +365,7 @@
 			files = (
 				17E042842E57ED0E00468972 /* LoginView.swift in Sources */,
 				17E042852E57ED0E00468972 /* NavigationService.swift in Sources */,
+				1735F1B42E5E61800095DD02 /* GoogleAuthService.swift in Sources */,
 				17E042862E57ED0E00468972 /* NearbyInteractionService.swift in Sources */,
 				17E042872E57ED0E00468972 /* User.swift in Sources */,
 				17E042882E57ED0E00468972 /* SupabaseService.swift in Sources */,
@@ -701,7 +711,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1737C0DE2E5E5F4500AB4982 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+		1735F1A32E5E60CE0095DD02 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
@@ -728,6 +738,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1735F1A42E5E60CE0095DD02 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1735F1A32E5E60CE0095DD02 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		1735F1A62E5E60CE0095DD02 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1735F1A32E5E60CE0095DD02 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		17E042992E57F21500468972 /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 17E042982E57F21500468972 /* XCRemoteSwiftPackageReference "supabase-swift" */;
