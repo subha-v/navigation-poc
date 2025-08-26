@@ -1,144 +1,113 @@
 import SwiftUI
 
 struct LoginView: View {
-    @EnvironmentObject var supabaseService: SupabaseService
     @State private var email = ""
     @State private var password = ""
-    @State private var isSignUp = false
-    @State private var selectedRole: UserRole = .tagger
-    @State private var showError = false
+    @State private var showSignup = false
+    @State private var showForgotPassword = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var isLoading = false
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("VALUENEX Navigation")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
-            Text("Indoor Navigation System")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            VStack(spacing: 16) {
-                TextField("Email", text: $email)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none)
-                    .keyboardType(.emailAddress)
+        NavigationStack {
+            VStack(spacing: 20) {
+                Spacer()
                 
-                SecureField("Password", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                Text("Welcome Back")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
                 
-                if isSignUp {
-                    Picker("Role", selection: $selectedRole) {
-                        ForEach(UserRole.allCases, id: \.self) { role in
-                            Text(role.displayName).tag(role)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                }
-            }
-            .padding(.horizontal)
-            
-            Button(action: authenticate) {
-                if supabaseService.isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                } else {
-                    Text(isSignUp ? "Sign Up" : "Sign In")
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.horizontal)
-            .disabled(supabaseService.isLoading)
-            
-            // Divider
-            HStack {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundColor(.gray.opacity(0.3))
-                Text("OR")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundColor(.gray.opacity(0.3))
-            }
-            .padding(.horizontal)
-            
-            // Google Sign In Button
-            Button(action: signInWithGoogle) {
-                HStack(spacing: 12) {
-                    Image(systemName: "globe")
-                        .font(.title2)
+                Text("Sign in to continue")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                VStack(spacing: 16) {
+                    TextField("Email", text: $email)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .textContentType(.emailAddress)
                     
-                    Text("Continue with Google")
-                        .fontWeight(.semibold)
+                    SecureField("Password", text: $password)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .textContentType(.password)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+                .padding(.horizontal, 32)
+                .padding(.top, 32)
+                
+                Button(action: handleLogin) {
+                    if isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Text("Sign In")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .padding(.horizontal, 32)
+                .disabled(isLoading || email.isEmpty || password.isEmpty)
+                
+                Button(action: { showForgotPassword = true }) {
+                    Text("Forgot Password?")
+                        .font(.footnote)
+                        .foregroundColor(.blue)
+                }
+                
+                Spacer()
+                
+                HStack {
+                    Text("Don't have an account?")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                    
+                    Button(action: { showSignup = true }) {
+                        Text("Sign Up")
+                            .font(.footnote)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.blue)
+                    }
+                }
+                .padding(.bottom, 32)
             }
-            .padding(.horizontal)
-            .disabled(supabaseService.isLoading)
-            
-            Button(action: { isSignUp.toggle() }) {
-                Text(isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up")
-                    .foregroundColor(.blue)
+            .navigationDestination(isPresented: $showSignup) {
+                SignupView()
             }
-        }
-        .padding()
-        .alert("Error", isPresented: $showError) {
-            Button("OK") { }
-        } message: {
-            Text(supabaseService.errorMessage ?? "An error occurred")
-        }
-        .onChange(of: supabaseService.errorMessage) { error in
-            showError = error != nil
+            .navigationDestination(isPresented: $showForgotPassword) {
+                ForgotPasswordView()
+            }
+            .alert("Login", isPresented: $showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
+            }
         }
     }
     
-    private func authenticate() {
-        Task {
-            do {
-                if isSignUp {
-                    try await supabaseService.signUp(
-                        email: email,
-                        password: password,
-                        role: selectedRole
-                    )
-                } else {
-                    try await supabaseService.signIn(
-                        email: email,
-                        password: password
-                    )
-                }
-            } catch {
-                supabaseService.errorMessage = error.localizedDescription
-            }
-        }
-    }
-    
-    private func signInWithGoogle() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let rootViewController = windowScene.windows.first?.rootViewController else {
-            supabaseService.errorMessage = "Cannot find root view controller"
-            showError = true
-            return
-        }
+    private func handleLogin() {
+        guard !email.isEmpty, !password.isEmpty else { return }
+        
+        isLoading = true
         
         Task {
             do {
-                if let user = try await GoogleAuthService.shared.signInWithGoogle(presenting: rootViewController) {
-                    await supabaseService.setCurrentUser(user)
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                
+                await MainActor.run {
+                    isLoading = false
+                    alertMessage = "Login functionality will be implemented with your backend"
+                    showAlert = true
                 }
             } catch {
-                supabaseService.errorMessage = error.localizedDescription
-                showError = true
+                await MainActor.run {
+                    isLoading = false
+                    alertMessage = "An error occurred"
+                    showAlert = true
+                }
             }
         }
     }
