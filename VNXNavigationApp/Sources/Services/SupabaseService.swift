@@ -77,14 +77,26 @@ class SupabaseService: ObservableObject {
         
         defer { isLoading = false }
         
-        let session = try await client.auth.signIn(
-            email: email,
-            password: password
-        )
-        
-        let userId = session.user.id
-        await fetchUserProfile(userId: userId)
-        isAuthenticated = true
+        do {
+            let session = try await client.auth.signIn(
+                email: email,
+                password: password
+            )
+            
+            let userId = session.user.id
+            await fetchUserProfile(userId: userId)
+            isAuthenticated = true
+        } catch {
+            // If email not confirmed, try to sign up again (will auto-sign in if already exists)
+            if error.localizedDescription.contains("not confirmed") || 
+               error.localizedDescription.contains("Email not confirmed") {
+                // For existing unconfirmed users, we can't bypass without Supabase settings
+                errorMessage = "Email not confirmed. Please check Supabase Dashboard → Authentication → Users and manually confirm this email, or disable email confirmation in Authentication → Providers → Email settings."
+                throw error
+            } else {
+                throw error
+            }
+        }
     }
     
     func signOut() async {
