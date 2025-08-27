@@ -104,6 +104,12 @@ class NISessionService: NSObject, ObservableObject {
         }
         
         let config = NINearbyPeerConfiguration(peerToken: peerToken)
+        
+        print("DEBUG: About to run NI session")
+        print("DEBUG: Session delegate is set: \(session.delegate != nil)")
+        print("DEBUG: My token exists: \(myDiscoveryToken != nil)")
+        print("DEBUG: Peer token received: \(peerDiscoveryToken != nil)")
+        
         session.run(config)
         
         DispatchQueue.main.async {
@@ -111,7 +117,8 @@ class NISessionService: NSObject, ObservableObject {
             self.connectionState = "Ranging active"
         }
         
-        print("🎯 Started NI ranging with peer")
+        print("DEBUG: NI session.run() called successfully")
+        print("Started NI ranging with peer")
     }
     
     func stopSession() {
@@ -150,11 +157,14 @@ class NISessionService: NSObject, ObservableObject {
 
 extension NISessionService: NISessionDelegate {
     func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
-        print("📡 NI delegate called with \(nearbyObjects.count) objects")
+        print("DELEGATE: NI session didUpdate called with \(nearbyObjects.count) objects")
         guard let object = nearbyObjects.first else { 
-            print("⚠️ No nearby objects in update")
+            print("DELEGATE: No nearby objects in update")
             return 
         }
+        
+        print("DELEGATE: Object has distance: \(object.distance != nil)")
+        print("DELEGATE: Object has direction: \(object.direction != nil)")
         
         DispatchQueue.main.async {
             self.distance = object.distance
@@ -167,9 +177,11 @@ extension NISessionService: NISessionDelegate {
                 self.azimuth = azimuth
                 self.elevation = elevation
                 
-                print("📏 Distance: \(self.formatDistance()), Direction: \(self.formatDirection())")
+                print("MEASUREMENT: Distance: \(self.formatDistance()), Direction: \(self.formatDirection())")
             } else if object.distance != nil {
-                print("📏 Distance: \(self.formatDistance()) (no direction yet)")
+                print("MEASUREMENT: Distance: \(self.formatDistance()) (no direction yet)")
+            } else {
+                print("MEASUREMENT: No distance or direction available yet")
             }
         }
     }
