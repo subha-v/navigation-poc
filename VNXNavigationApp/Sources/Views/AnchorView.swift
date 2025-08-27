@@ -105,68 +105,14 @@ struct AnchorView: View {
                         ScrollView {
                             VStack(spacing: 12) {
                                 ForEach(anchorService.connectedPeers) { peer in
-                                    HStack {
-                                        Image(systemName: "location.fill")
-                                            .foregroundColor(.blue)
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(peer.displayName)
-                                                .font(.subheadline)
-                                                .fontWeight(.medium)
-                                            
-                                            HStack {
-                                                Text("Connected")
-                                                    .font(.caption)
-                                                    .foregroundColor(.green)
-                                                
-                                                if let lastPing = peer.lastPingTime {
-                                                    Text("• Last ping: \(lastPing, style: .relative) ago")
-                                                        .font(.caption)
-                                                        .foregroundColor(.secondary)
-                                                }
-                                            }
-                                            
-                                            if peer.peerID == anchorService.connectedNavigator {
-                                                VStack(alignment: .leading, spacing: 4) {
-                                                    Text("NI Session Active")
-                                                        .font(.caption)
-                                                        .fontWeight(.bold)
-                                                        .foregroundColor(.orange)
-                                                    
-                                                    Text("My: \(anchorService.niSessionService.myToken)")
-                                                        .font(.caption2)
-                                                        .fontWeight(.monospaced)
-                                                        .lineLimit(1)
-                                                    
-                                                    Text("Peer: \(anchorService.niSessionService.peerToken)")
-                                                        .font(.caption2)
-                                                        .fontWeight(.monospaced)
-                                                        .lineLimit(1)
-                                                    
-                                                    if anchorService.niSessionService.isRunning {
-                                                        Text("Distance: \(anchorService.niSessionService.formatDistance())")
-                                                            .font(.caption)
-                                                            .fontWeight(.bold)
-                                                            .foregroundColor(.blue)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Button(action: {
+                                    ConnectedPeerRow(
+                                        peer: peer,
+                                        isNavigatorWithNI: peer.peerID == anchorService.connectedNavigator,
+                                        niSessionService: anchorService.niSessionService,
+                                        onPing: {
                                             anchorService.sendPing(to: peer.peerID)
-                                        }) {
-                                            Image(systemName: "arrow.triangle.2.circlepath")
-                                                .font(.caption)
                                         }
-                                        .buttonStyle(.bordered)
-                                        .controlSize(.small)
-                                    }
-                                    .padding()
-                                    .background(Color.gray.opacity(0.1))
-                                    .cornerRadius(10)
+                                    )
                                 }
                             }
                             .padding(.horizontal)

@@ -137,7 +137,7 @@ extension MultipeerService: MCSessionDelegate {
         }
     }
     
-    func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
+    open func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
         print("🔄 Received token exchange from \(peerID.displayName)")
     }
     

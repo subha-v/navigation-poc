@@ -118,68 +118,16 @@ struct NavigatorView: View {
                         ScrollView {
                             VStack(spacing: 12) {
                                 ForEach(navigatorService.discoveredAnchors) { anchor in
-                                    HStack {
-                                        Image(systemName: "anchor")
-                                            .foregroundColor(.blue)
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(anchor.displayName)
-                                                .font(.subheadline)
-                                                .fontWeight(.medium)
-                                            
-                                            Text("Anchor ID: \(anchor.anchorID)")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                            
-                                            if isConnectedToAnchor(anchor) {
-                                                Text("✓ Connected")
-                                                    .font(.caption)
-                                                    .foregroundColor(.green)
-                                                    .fontWeight(.semibold)
-                                            }
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        if isConnectedToAnchor(anchor) {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(.green)
-                                        } else if anchor.isConnecting {
-                                            ProgressView()
-                                                .progressViewStyle(CircularProgressViewStyle())
-                                                .scaleEffect(0.8)
-                                        } else {
-                                            Button(action: {
-                                                connectToAnchor(anchor)
-                                            }) {
-                                                Text("Connect")
-                                                    .font(.caption)
-                                            }
-                                            .buttonStyle(.borderedProminent)
-                                            .controlSize(.small)
-                                        }
-                                    }
-                                    .padding()
-                                    .onTapGesture {
-                                        if isConnectedToAnchor(anchor) {
+                                    DiscoveredAnchorRow(
+                                        anchor: anchor,
+                                        isConnected: isConnectedToAnchor(anchor),
+                                        onConnect: {
+                                            connectToAnchor(anchor)
+                                        },
+                                        onTap: {
                                             selectedAnchor = anchor
                                         }
-                                    }
-                                    .background(
-                                        isConnectedToAnchor(anchor) ?
-                                        Color.green.opacity(0.1) :
-                                        Color.gray.opacity(0.1)
                                     )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(
-                                                isConnectedToAnchor(anchor) ?
-                                                Color.green.opacity(0.3) :
-                                                Color.clear,
-                                                lineWidth: 2
-                                            )
-                                    )
-                                    .cornerRadius(10)
                                 }
                             }
                             .padding(.horizontal)
