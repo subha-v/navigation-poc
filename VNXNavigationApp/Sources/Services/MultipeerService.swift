@@ -17,7 +17,7 @@ struct ConnectedPeer: Identifiable {
 }
 
 class MultipeerService: NSObject, ObservableObject {
-    static let serviceType = "vnx"
+    static let serviceType = "vnx-nav"
     
     @Published var connectedPeers: [ConnectedPeer] = []
     @Published var connectionStatus = "Not connected"
