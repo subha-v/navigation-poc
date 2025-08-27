@@ -160,6 +160,11 @@ struct NavigatorView: View {
                                         }
                                     }
                                     .padding()
+                                    .onTapGesture {
+                                        if isConnectedToAnchor(anchor) {
+                                            selectedAnchor = anchor
+                                        }
+                                    }
                                     .background(
                                         isConnectedToAnchor(anchor) ?
                                         Color.green.opacity(0.1) :
@@ -180,6 +185,70 @@ struct NavigatorView: View {
                             .padding(.horizontal)
                         }
                     }
+                }
+                
+                if let selected = selectedAnchor,
+                   isConnectedToAnchor(selected) {
+                    VStack(spacing: 10) {
+                        Divider()
+                        
+                        Text("NI Session with \(selected.displayName)")
+                            .font(.headline)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("My Token:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(navigatorService.niSessionService.myToken)
+                                    .font(.caption2)
+                                    .fontWeight(.monospaced)
+                            }
+                            
+                            HStack {
+                                Text("Peer Token:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(navigatorService.niSessionService.peerToken)
+                                    .font(.caption2)
+                                    .fontWeight(.monospaced)
+                            }
+                            
+                            HStack {
+                                Text("Status:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(navigatorService.niSessionService.connectionState)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            
+                            if navigatorService.niSessionService.isRunning {
+                                HStack {
+                                    Text("Distance:")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text(navigatorService.niSessionService.formatDistance())
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color.blue.opacity(0.05))
+                        .cornerRadius(10)
+                        
+                        Button(action: {
+                            navigatorService.startNISession(with: selected)
+                        }) {
+                            Label("Start NI Session", systemImage: "dot.radiowaves.left.and.right")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                    }
+                    .padding(.horizontal)
                 }
                 
                 Spacer()

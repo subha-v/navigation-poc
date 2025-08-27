@@ -1,6 +1,7 @@
 import Foundation
 import MultipeerConnectivity
 import Combine
+import NearbyInteraction
 
 class AnchorService: MultipeerService {
     static let shared = AnchorService()
@@ -8,6 +9,9 @@ class AnchorService: MultipeerService {
     private var advertiser: MCNearbyServiceAdvertiser?
     @Published var isAdvertising = false
     @Published var advertisingStatus = "Not advertising"
+    
+    let niSessionService = NISessionService()
+    @Published var connectedNavigator: MCPeerID?
     
     override init() {
         super.init()
@@ -59,7 +63,40 @@ class AnchorService: MultipeerService {
     
     override func cleanup() {
         stopAdvertising()
+        niSessionService.stopSession()
         super.cleanup()
+    }
+    
+    override func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
+        super.handleTokenExchange(tokenExchange, from: peerID, session: session)
+        
+        if tokenExchange.type == "ni_token_request" {
+            print("📍 Received NI token request from \(peerID.displayName)")
+            
+            connectedNavigator = peerID
+            
+            niSessionService.receivePeerToken(tokenExchange.token, from: peerID)
+            
+            guard let myTokenData = niSessionService.startSession(for: peerID) else {
+                print("❌ Failed to generate anchor token")
+                return
+            }
+            
+            let responseToken = TokenExchange(
+                type: "ni_token_response",
+                token: myTokenData,
+                peerName: self.peerID?.displayName ?? "Unknown",
+                timestamp: Date()
+            )
+            
+            do {
+                let data = try JSONEncoder().encode(responseToken)
+                try session.send(data, toPeers: [peerID], with: .reliable)
+                print("📤 Sent NI token response to \(peerID.displayName)")
+            } catch {
+                print("❌ Failed to send token response: \(error)")
+            }
+        }
     }
 }
 

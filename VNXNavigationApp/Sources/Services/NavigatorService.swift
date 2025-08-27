@@ -1,6 +1,7 @@
 import Foundation
 import MultipeerConnectivity
 import Combine
+import NearbyInteraction
 
 struct DiscoveredAnchor: Identifiable {
     let id = UUID()
@@ -17,6 +18,9 @@ class NavigatorService: MultipeerService {
     @Published var discoveredAnchors: [DiscoveredAnchor] = []
     @Published var isBrowsing = false
     @Published var browsingStatus = "Not browsing"
+    
+    let niSessionService = NISessionService()
+    @Published var selectedAnchor: DiscoveredAnchor?
     
     override init() {
         super.init()
@@ -89,9 +93,54 @@ class NavigatorService: MultipeerService {
         }
     }
     
+    func startNISession(with anchor: DiscoveredAnchor) {
+        guard let session = session else {
+            print("❌ No MC session available")
+            return
+        }
+        
+        guard session.connectedPeers.contains(anchor.peerID) else {
+            print("❌ Not connected to anchor \(anchor.displayName)")
+            return
+        }
+        
+        selectedAnchor = anchor
+        
+        guard let tokenData = niSessionService.startSession(for: anchor.peerID) else {
+            print("❌ Failed to generate NI token")
+            return
+        }
+        
+        let tokenExchange = TokenExchange(
+            type: "ni_token_request",
+            token: tokenData,
+            peerName: peerID?.displayName ?? "Unknown",
+            timestamp: Date()
+        )
+        
+        do {
+            let data = try JSONEncoder().encode(tokenExchange)
+            try session.send(data, toPeers: [anchor.peerID], with: .reliable)
+            print("📤 Sent NI token to \(anchor.displayName)")
+        } catch {
+            print("❌ Failed to send token: \(error)")
+        }
+    }
+    
     override func cleanup() {
         stopBrowsing()
+        niSessionService.stopSession()
         super.cleanup()
+    }
+    
+    override func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
+        super.handleTokenExchange(tokenExchange, from: peerID, session: session)
+        
+        if tokenExchange.type == "ni_token_response" {
+            print("📍 Received NI token response from \(peerID.displayName)")
+            
+            niSessionService.receivePeerToken(tokenExchange.token, from: peerID)
+        }
     }
 }
 

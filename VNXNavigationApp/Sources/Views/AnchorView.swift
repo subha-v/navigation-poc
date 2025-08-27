@@ -125,6 +125,32 @@ struct AnchorView: View {
                                                         .foregroundColor(.secondary)
                                                 }
                                             }
+                                            
+                                            if peer.peerID == anchorService.connectedNavigator {
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text("NI Session Active")
+                                                        .font(.caption)
+                                                        .fontWeight(.bold)
+                                                        .foregroundColor(.orange)
+                                                    
+                                                    Text("My: \(anchorService.niSessionService.myToken)")
+                                                        .font(.caption2)
+                                                        .fontWeight(.monospaced)
+                                                        .lineLimit(1)
+                                                    
+                                                    Text("Peer: \(anchorService.niSessionService.peerToken)")
+                                                        .font(.caption2)
+                                                        .fontWeight(.monospaced)
+                                                        .lineLimit(1)
+                                                    
+                                                    if anchorService.niSessionService.isRunning {
+                                                        Text("Distance: \(anchorService.niSessionService.formatDistance())")
+                                                            .font(.caption)
+                                                            .fontWeight(.bold)
+                                                            .foregroundColor(.blue)
+                                                    }
+                                                }
+                                            }
                                         }
                                         
                                         Spacer()

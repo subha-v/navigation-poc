@@ -103,6 +103,11 @@ extension MultipeerService: MCSessionDelegate {
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        if let tokenExchange = try? JSONDecoder().decode(TokenExchange.self, from: data) {
+            handleTokenExchange(tokenExchange, from: peerID, session: session)
+            return
+        }
+        
         guard let message = String(data: data, encoding: .utf8) else { return }
         
         DispatchQueue.main.async { [weak self] in
@@ -130,6 +135,10 @@ extension MultipeerService: MCSessionDelegate {
                 }
             }
         }
+    }
+    
+    func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
+        print("🔄 Received token exchange from \(peerID.displayName)")
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
