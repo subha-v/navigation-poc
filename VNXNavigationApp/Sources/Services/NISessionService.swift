@@ -33,10 +33,17 @@ class NISessionService: NSObject, ObservableObject {
     private func checkDeviceCapabilities() {
         guard NISession.isSupported else {
             print("❌ Nearby Interaction is not supported on this device")
+            print("   - Device may lack U1 chip (need iPhone 11+)")
+            print("   - Or UWB may be disabled in your region")
             connectionState = "NI not supported on this device"
             return
         }
         print("✅ Nearby Interaction is supported")
+        print("IMPORTANT: Check these settings on BOTH devices:")
+        print("   1. Settings → Privacy → Location Services → System Services → Networking & Wireless = ON")
+        print("   2. Settings → Privacy → Nearby Interactions → VNXNavigationApp = Allow")
+        print("   3. Settings → Bluetooth = ON")
+        print("   4. Settings → Privacy → Local Network → VNXNavigationApp = ON")
     }
     
     func startSession(for peerID: MCPeerID) -> Data? {
