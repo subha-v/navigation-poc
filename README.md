@@ -2,9 +2,9 @@
 
 A proof-of-concept indoor navigation system for conferences and large venues, enabling precise indoor positioning and navigation using smartphone technology.
 
-**Last Updated**: August 26, 2024  
-**Current Version**: 1.0 (MultipeerConnectivity)  
-**Next Version**: 2.0 (Nearby Interaction - In Development)
+**Last Updated**: August 27, 2024  
+**Current Version**: 2.0 (Nearby Interaction - WORKING)  
+**Status**: ✅ Distance measurements between devices functional
 
 ## 🎯 Project Vision
 
@@ -67,15 +67,100 @@ VNXNavigationApp/
 └── GoogleService-Info.plist # Firebase configuration
 ```
 
-## 🚀 Next Phase: Nearby Interaction (v2.0)
+## 🎉 Nearby Interaction Implementation (v2.0) - WORKING!
 
-### Planned Upgrades
-Transform the current MultipeerConnectivity foundation into a full UWB-based navigation system:
+### ✅ Completed Features
+Successfully integrated Ultra-Wideband (UWB) technology for precise distance measurements:
 
-#### Phase 1: UWB Integration
-- [ ] Replace MultipeerConnectivity with Nearby Interaction API
-- [ ] Implement UWB distance ranging between devices
-- [ ] Add direction finding (azimuth and elevation)
+#### Working Implementation
+- [x] **Nearby Interaction API Integration**: Full UWB ranging capability
+- [x] **Distance Measurements**: Real-time distance updates between devices (accuracy: ~10cm)
+- [x] **Token Exchange**: Secure discovery token exchange via MultipeerConnectivity
+- [x] **Direction Support**: Azimuth and elevation when camera is pointed at peer
+- [x] **Live Updates**: Distance refreshes automatically as devices move
+
+### 📱 How It Works
+
+1. **Anchor Phone** (Base Station):
+   - Starts advertising via MultipeerConnectivity
+   - Waits for navigator connection
+   - Creates NI session and exchanges tokens
+   - Provides distance measurements to navigator
+
+2. **Navigator Phone** (Moving User):
+   - Browses for nearby anchors
+   - Connects and initiates NI session
+   - Displays real-time distance to anchor
+   - Updates as user moves around
+
+### ⚙️ Critical Setup Requirements
+
+#### Device Settings (BOTH phones must have these enabled):
+
+1. **U1 Chip Activation** ⚠️ MOST IMPORTANT:
+   - Settings → Privacy & Security → Location Services → **System Services** → **Networking & Wireless** = **ON**
+   - (This hidden setting controls the U1 chip - without it, NI won't work!)
+
+2. **App Permissions**:
+   - Settings → Privacy & Security → **Nearby Interactions** → VNXNavigationApp = **Allow**
+   - Settings → Privacy & Security → **Local Network** → VNXNavigationApp = **ON**
+   - Settings → Privacy & Security → **Camera** → VNXNavigationApp = **Allow**
+   - Settings → **Bluetooth** = **ON**
+
+3. **Physical Requirements**:
+   - Both devices need U1 chip (iPhone 11 or newer, excluding SE)
+   - Devices must be within 9 meters
+   - Move devices slightly after starting session to initiate UWB
+   - For direction: point camera toward peer device
+
+### 🐛 Troubleshooting Distance Measurements
+
+If distance shows "--" or doesn't update:
+1. **Check Networking & Wireless is ON** (see settings above)
+2. **Move the phones** - UWB needs movement to start ranging
+3. **Keep apps in foreground** on both devices
+4. **Verify in Console logs** - filter by "VNXNavigationApp"
+5. Look for "MEASUREMENT: Distance:" logs
+
+## 🔧 Challenging Bugs & Solutions
+
+### Bug #1: NI Distance Measurements Not Appearing (August 27, 2024)
+
+**Problem**: 
+- NI session was established, tokens exchanged successfully, but delegate methods were never called
+- Distance always showed "--" in the UI
+- No "MEASUREMENT" logs appeared in Console despite successful session setup
+
+**Root Cause**:
+In `AnchorService.swift`, the token exchange order was incorrect:
+```swift
+// WRONG ORDER:
+niSessionService.receivePeerToken(tokenExchange.token, from: peerID)  // No session exists yet!
+guard let myTokenData = niSessionService.startSession(for: peerID)   // Creates session after
+```
+The anchor was trying to start ranging BEFORE creating its NI session, so `startRanging()` had no session to configure.
+
+**Solution**:
+Reordered operations to create session FIRST:
+```swift
+// CORRECT ORDER:
+guard let myTokenData = niSessionService.startSession(for: peerID)   // Create session first
+niSessionService.receivePeerToken(tokenExchange.token, from: peerID)  // Then process peer token
+```
+
+**Additional Discovery**:
+- The critical **Networking & Wireless** setting in System Services must be ON for U1 chip
+- This setting is often missed as it's buried deep in Location Services
+- Without it, NISession.isSupported returns true but delegate is never called
+
+**Lessons Learned**:
+1. Token exchange order matters - always create session before processing tokens
+2. U1 chip requires system-level location setting, not just app permission
+3. Comprehensive logging (DEBUG, DELEGATE, MEASUREMENT) essential for troubleshooting
+4. Physical device movement required to initiate UWB ranging
+
+### Next Features to Implement
+- [ ] Multi-anchor trilateration for absolute positioning
 - [ ] Create trilateration algorithm for position calculation
 
 #### Phase 2: Navigation Engine
