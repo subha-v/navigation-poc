@@ -75,12 +75,14 @@ class AnchorService: MultipeerService {
             
             connectedNavigator = peerID
             
-            niSessionService.receivePeerToken(tokenExchange.token, from: peerID)
-            
+            // IMPORTANT: Create our session FIRST before processing peer token
             guard let myTokenData = niSessionService.startSession(for: peerID) else {
                 print("❌ Failed to generate anchor token")
                 return
             }
+            
+            // Now process the peer's token with our existing session
+            niSessionService.receivePeerToken(tokenExchange.token, from: peerID)
             
             let responseToken = TokenExchange(
                 type: "ni_token_response",

@@ -150,7 +150,11 @@ class NISessionService: NSObject, ObservableObject {
 
 extension NISessionService: NISessionDelegate {
     func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
-        guard let object = nearbyObjects.first else { return }
+        print("📡 NI delegate called with \(nearbyObjects.count) objects")
+        guard let object = nearbyObjects.first else { 
+            print("⚠️ No nearby objects in update")
+            return 
+        }
         
         DispatchQueue.main.async {
             self.distance = object.distance
