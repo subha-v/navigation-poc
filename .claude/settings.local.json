@@ -18,7 +18,8 @@
       "Bash(xcrun devicectl device list devices:*)",
       "Bash(xcrun devicectl device:*)",
       "Bash(log stream:*)",
-      "Bash(/usr/bin/log:*)"
+      "Bash(/usr/bin/log:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": [],
