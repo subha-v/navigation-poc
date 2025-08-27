@@ -49,5 +49,11 @@
         <string>_vnx._tcp</string>
         <string>_vnx._udp</string>
     </array>
+    <key>NSCameraUsageDescription</key>
+    <string>This app uses the camera to improve the accuracy of nearby interaction measurements for indoor navigation.</string>
+    <key>NSNearbyInteractionUsageDescription</key>
+    <string>This app uses Ultra Wideband to measure precise distance and direction to anchor devices for accurate indoor navigation.</string>
+    <key>NSNearbyInteractionAllowOnceUsageDescription</key>
+    <string>Allow this app to interact with nearby devices to provide accurate indoor navigation.</string>
 </dict>
 </plist>
