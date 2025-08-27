@@ -62,13 +62,11 @@ struct ConnectedPeerRow: View {
                 .foregroundColor(.orange)
             
             Text("My: \(niService.myToken)")
-                .font(.caption2)
-                .fontWeight(.monospaced)
+                .font(.system(.caption2, design: .monospaced))
                 .lineLimit(1)
             
             Text("Peer: \(niService.peerToken)")
-                .font(.caption2)
-                .fontWeight(.monospaced)
+                .font(.system(.caption2, design: .monospaced))
                 .lineLimit(1)
             
             if niService.isRunning {

@@ -68,6 +68,10 @@ class MultipeerService: NSObject, ObservableObject {
         session = nil
         peerID = nil
     }
+    
+    open func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
+        print("🔄 Received token exchange from \(peerID.displayName)")
+    }
 }
 
 extension MultipeerService: MCSessionDelegate {
@@ -135,10 +139,6 @@ extension MultipeerService: MCSessionDelegate {
                 }
             }
         }
-    }
-    
-    open func handleTokenExchange(_ tokenExchange: TokenExchange, from peerID: MCPeerID, session: MCSession) {
-        print("🔄 Received token exchange from \(peerID.displayName)")
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
