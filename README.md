@@ -1,227 +1,228 @@
 # VALUENEX Indoor Navigation System
 
-A proof-of-concept indoor navigation system using Ultra-Wideband (UWB) technology via Apple's Nearby Interaction API, combined with AI-powered floor plan analysis and A* pathfinding algorithms.
+A proof-of-concept indoor navigation system for conferences and large venues, enabling precise indoor positioning and navigation using smartphone technology.
 
-**Last Updated**: August 21, 2024  
-**Current Version**: 2.0 (VNXNavigationApp)
+**Last Updated**: August 26, 2024  
+**Current Version**: 1.0 (MultipeerConnectivity)  
+**Next Version**: 2.0 (Nearby Interaction - In Development)
 
-## Project Overview
+## 🎯 Project Vision
 
-This system enables precise indoor navigation in the VALUENEX office (5.71m × 23.19m) by combining:
-- **UWB-based trilateration** using iPhone 11+ devices as anchors and navigators
-- **AI-analyzed floor plans** with obstacle detection and path planning
-- **Real-time navigation** with visual arrow guidance and distance measurements
-- **Web-based map editor** for location management and testing
+Create an indoor navigation system where attendees can download an app that helps them navigate conferences and events by:
+- Using their phone to trilaterate position from 3-5 base stations (anchor phones)
+- Getting real-time directions to booths, rooms, or points of interest
+- Supporting multi-floor navigation with optimal path planning
+- Enabling smart features like "I'm interested in AI in healthcare - where should I go?"
 
-## System Architecture
+## 📱 Current Implementation (v1.0)
 
-### 1. Floor Plan Generation (`/FloorPlanGeneration`)
-Python-based backend for floor plan processing and pathfinding:
+### What's Built
+The current iOS app provides the foundation for device-to-device communication using MultipeerConnectivity:
 
-- **`astar_navigation.py`** - A* pathfinding algorithm with obstacle inflation
-- **`map_server.py`** - Flask REST API server (port 8080) providing:
-  - Navigation endpoints for the Swift app
-  - Location management API
-  - Anchor registration and status tracking
-- **`web_map_editor_connected.html`** - Interactive web interface for:
-  - Adding/editing office locations
-  - Testing pathfinding between points
-  - Visualizing navigation paths
-- **`floor_plan_updated_config.yaml`** - Floor plan configuration (5mm resolution)
-- **`office_locations_updated.json`** - Predefined office locations (kitchen, entrance, desks, etc.)
+#### Authentication System
+- **Firebase Authentication**: Secure user login/signup with email verification
+- **Role-based Access**: Users select either "Anchor" (base station) or "Navigator" (moving user) role
+- **User Profiles**: Stored in Firebase Firestore with role persistence
 
-### 2. iOS Navigation App (`/NavigationPoC`)
-Swift package implementing UWB-based indoor navigation:
+#### Device Communication
+- **MultipeerConnectivity Framework**: Enables iPhone-to-iPhone discovery and connection
+- **Anchor Mode**: Phones act as fixed base stations, advertising their presence
+- **Navigator Mode**: Moving phones discover and connect to nearby anchors
+- **Local Network Permission**: Automatic permission request for device discovery
 
 #### Core Services
-- **`NearbyInteractionService.swift`** - UWB ranging and device discovery
-- **`NavigationService.swift`** - Navigation engine with arrow direction calculation
-- **`PathfindingService.swift`** - Integration with Python A* server
-- **`CoordinateTransformService.swift`** - Converts UWB measurements to floor plan coordinates
-- **`SupabaseService.swift`** - Authentication and user management
+- **`AuthService.swift`**: Firebase authentication and session management
+- **`MultipeerService.swift`**: Base class for peer-to-peer communication
+- **`AnchorService.swift`**: Advertising service for anchor devices
+- **`NavigatorService.swift`**: Discovery and connection service for navigators
+- **`LocalNetworkAuthorization.swift`**: Forces iOS local network permission prompt
 
-#### UI Views
-- **`LoginView.swift`** - User authentication
-- **`RoleSelectionView.swift`** - Choose anchor or navigator role
-- **`AnchorView.swift`** - Interface for fixed anchor devices
-- **`TaggerView.swift`** - Destination selection for navigators
-- **`NavigationView.swift`** - Real-time navigation with arrow display
+#### User Interface
+- **Login/Signup Views**: Clean authentication flow with password reset
+- **Home View**: Role selection (Anchor vs Navigator)
+- **Anchor View**: Simple interface showing advertising status and connected peers
+- **Navigator View**: Shows discovered anchors and connection status
 
-#### Models
-- **`User.swift`** - User profiles with roles (anchor/tagger)
-- **`FloorPlan.swift`** - Office locations and navigation destinations
-- **`NavigationPath.swift`** - Path representation and waypoint management
-
-## How It Works
-
-### Setup Phase
-1. **Deploy 3 Anchor iPhones** at fixed positions:
-   - Kitchen (2.73m, 1.2m)
-   - Entrance (3.56m, 22.18m)
-   - Side Table (4.62m, 17.37m)
-
-2. **Start Python Server** on local network:
-   ```bash
-   cd FloorPlanGeneration
-   python3 map_server.py
-   ```
-
-3. **Configure Anchors** via iOS app:
-   - Sign in as "anchor" role
-   - Select position (kitchen/entrance/side table)
-   - Start broadcasting UWB signals
-
-### Navigation Phase
-1. **Navigator (Tagger) Setup**:
-   - Sign in as "tagger" role
-   - Select destination from available locations
-   - Start navigation
-
-2. **Position Calculation**:
-   - App measures distances to all 3 anchors using UWB
-   - Trilateration algorithm calculates precise position
-   - Position converted to floor plan coordinates
-
-3. **Path Guidance**:
-   - Python server calculates optimal path using A*
-   - App displays arrow pointing to next waypoint
-   - Real-time distance and direction updates
-   - Path recalculation if user deviates >2m
-
-## Technical Specifications
-
-### UWB Ranging
-- **Technology**: Apple Nearby Interaction API
-- **Accuracy**: ~10cm in ideal conditions
-- **Update Rate**: 10-15 Hz
-- **Range**: Up to 9 meters
-- **Requirements**: iPhone 11+ with U1 chip
-
-### Floor Plan Processing
-- **Resolution**: 5mm per pixel
-- **Office Dimensions**: 5.71m × 23.19m
-- **Obstacle Inflation**: 30cm radius for safe navigation
-- **Path Smoothing**: Waypoint reduction algorithm
-
-### Network Architecture
-- **Local Server**: Flask on port 8080
-- **Authentication**: Supabase cloud service
-- **Device Discovery**: MultipeerConnectivity framework
-- **API Format**: RESTful JSON
-
-## Project Structure
-
+### Current Architecture
 ```
-/Navigation PoC/
-├── FloorPlanGeneration/          # Python backend
-│   ├── map_server.py             # Flask API server
-│   ├── astar_navigation.py       # Pathfinding algorithm
-│   ├── web_map_editor_connected.html  # Web interface
-│   ├── floor_plan_updated_config.yaml # Map configuration
-│   ├── office_locations_updated.json  # Location database
-│   └── VNX_BW_Floorplan_Updated.PNG  # Office floor plan
-│
-├── VNXNavigationApp/             # iOS Swift app (Current)
-│   ├── VNXNavigationApp.xcodeproj  # Xcode project
-│   ├── VNXNavigationApp/         # App source files
-│   │   ├── Assets.xcassets/     # App icons and colors
-│   │   └── Info.plist            # App permissions
-│   ├── Sources/                  # Swift source code
-│   │   ├── App/                  # App entry point
-│   │   ├── Config/               # Configuration files
-│   │   ├── Models/               # Data models
-│   │   ├── Services/             # Core services
-│   │   └── Views/                # SwiftUI views
-│   └── Package.swift             # Package dependencies
-│
-└── CLAUDE.md                     # AI assistant instructions
+VNXNavigationApp/
+├── Sources/
+│   ├── App/                  # App entry point
+│   │   └── VNXNavigationApp.swift
+│   ├── Models/               # Data models
+│   │   └── User.swift
+│   ├── Services/             # Core services
+│   │   ├── AuthService.swift
+│   │   ├── MultipeerService.swift
+│   │   ├── AnchorService.swift
+│   │   ├── NavigatorService.swift
+│   │   └── LocalNetworkAuthorization.swift
+│   └── Views/                # SwiftUI views
+│       ├── LoginView.swift
+│       ├── SignupView.swift
+│       ├── HomeView.swift
+│       ├── AnchorView.swift
+│       └── NavigatorView.swift
+├── Info.plist               # App permissions
+└── GoogleService-Info.plist # Firebase configuration
 ```
 
-## Key Features
+## 🚀 Next Phase: Nearby Interaction (v2.0)
 
-- **Real-time Indoor Positioning**: <10cm accuracy using UWB trilateration
-- **Intelligent Path Planning**: A* algorithm with obstacle avoidance
-- **Visual Navigation**: Arrow-based guidance with distance indicators
-- **Multi-floor Support**: Ready for expansion to multiple building levels
-- **Web Testing Interface**: Browser-based path visualization and testing
-- **Role-based System**: Separate interfaces for anchors and navigators
-- **Cloud Authentication**: Secure user management via Supabase
-- **Offline Capability**: Local server for reliability
+### Planned Upgrades
+Transform the current MultipeerConnectivity foundation into a full UWB-based navigation system:
 
-## Getting Started
+#### Phase 1: UWB Integration
+- [ ] Replace MultipeerConnectivity with Nearby Interaction API
+- [ ] Implement UWB distance ranging between devices
+- [ ] Add direction finding (azimuth and elevation)
+- [ ] Create trilateration algorithm for position calculation
+
+#### Phase 2: Navigation Engine
+- [ ] Integrate floor plan mapping (from FloorPlanGeneration/)
+- [ ] Implement A* pathfinding algorithm
+- [ ] Add real-time position tracking
+- [ ] Create arrow-based navigation UI
+
+#### Phase 3: Advanced Features
+- [ ] Multi-floor support with elevator/stair routing
+- [ ] Points of Interest (POI) management
+- [ ] Smart recommendations ("Show me AI booths")
+- [ ] Path optimization for multiple destinations
+- [ ] Historical analytics and heatmaps
+
+### Technical Requirements for v2.0
+- **Nearby Interaction API**: For precise UWB ranging (10cm accuracy)
+- **Core Location**: For initial position estimation
+- **ARKit Integration**: For improved position tracking
+- **Local Pathfinding Server**: Python Flask backend with A* algorithm
+- **Floor Plan Data**: Building maps with obstacle definitions
+
+## 🛠️ Setup Instructions
 
 ### Prerequisites
-- 4 iPhones with iOS 16+ and U1 chip (iPhone 11 or newer)
+- 4+ iPhones with iOS 16+ (iPhone 11 or newer for UWB in v2.0)
 - Mac with Xcode 15+
-- Python 3.8+
-- Local WiFi network
-- Apple Developer account (for device deployment)
-- Supabase account (free tier works)
+- Apple Developer account
+- Firebase project (free tier)
+- Same WiFi network for all devices
 
 ### Installation
 
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/subha-v/navigation-poc.git
-   cd "Navigation PoC"
+   cd "Navigation PoC/VNXNavigationApp"
    ```
 
-2. **Set up Python server**:
+2. **Open in Xcode**:
    ```bash
-   cd FloorPlanGeneration
-   pip install flask flask-cors pyyaml numpy pillow
-   python3 map_server.py
+   open VNXNavigationApp/VNXNavigationApp.xcodeproj
    ```
 
-3. **Configure iOS app**:
-   - Open `VNXNavigationApp.xcodeproj` in Xcode
-   - Supabase credentials are in `Sources/Config/SupabaseConfig.swift`
-   - Server IP is in `Sources/Config/ServerConfig.swift`
-   - Set your Apple Developer Team ID in project settings
-   - Build and run on devices
+3. **Configure signing**:
+   - Select your Apple Developer Team
+   - Update bundle identifier if needed
 
-4. **Access web interface**:
-   - Open browser to `http://localhost:8080`
-   - Add/edit office locations
-   - Test pathfinding
+4. **Build and deploy**:
+   - Connect iPhones via USB
+   - Build and run on each device
+   - Trust developer certificate on devices
 
-## Use Cases
+5. **Test the system**:
+   - Deploy 3 phones as anchors (login and select Anchor role)
+   - Use 1 phone as navigator (login and select Navigator role)
+   - Navigator should discover and connect to anchors
 
-1. **Conference Navigation**: Guide attendees to specific booths or rooms
-2. **Emergency Evacuation**: Direct people to nearest exits
-3. **Accessibility**: Assist visually impaired users with precise guidance
-4. **Asset Tracking**: Locate equipment or personnel in real-time
-5. **Visitor Management**: Guide guests to meeting rooms or offices
+## 📊 FloorPlanGeneration (For Future Integration)
 
-## Future Enhancements
+The repository includes a Python-based floor plan system ready for v2.0:
 
-- [ ] Multi-floor navigation with elevator/stair routing
-- [ ] Voice-guided navigation
-- [ ] Augmented Reality overlay
-- [ ] Historical path analytics
-- [ ] Integration with calendar for automatic destination selection
-- [ ] Support for more anchor devices for improved accuracy
-- [ ] Android app version
-- [ ] Cloud-based path computation for scalability
+```
+FloorPlanGeneration/
+├── astar_navigation.py          # A* pathfinding algorithm
+├── map_server.py                # Flask API server
+├── web_map_editor_connected.html # Web-based map editor
+├── floor_plan_updated_config.yaml # Floor plan configuration
+└── office_locations_updated.json  # POI definitions
+```
 
-## Technologies Used
+This will be integrated in v2.0 to provide:
+- Real-time pathfinding
+- Obstacle avoidance
+- Web-based location management
+- Path visualization
 
-- **iOS**: Swift 5.9, SwiftUI, Nearby Interaction, MultipeerConnectivity
-- **Backend**: Python 3, Flask, NumPy, Pillow
-- **Cloud**: Supabase (PostgreSQL, Authentication)
-- **Algorithms**: A* pathfinding, Trilateration, Kalman filtering
-- **Protocols**: REST API, WebSockets (planned)
+## 🎮 How It Works (Current v1.0)
 
-## Contributing
+1. **Anchor Setup**:
+   - Launch app on 3+ iPhones
+   - Login with email/password
+   - Select "Anchor" role
+   - Phones start advertising as base stations
 
-This is a proof-of-concept project for VALUENEX. For contributions or questions, please contact the development team.
+2. **Navigator Connection**:
+   - Launch app on navigator iPhone
+   - Login and select "Navigator" role
+   - App discovers nearby anchors
+   - Establishes peer-to-peer connections
 
-## License
+3. **Communication**:
+   - Devices exchange ping/pong messages
+   - Connection status shown in real-time
+   - Forms mesh network of devices
+
+## 🔮 Future Use Cases
+
+1. **Conference Navigation**: Guide attendees to specific booths
+2. **Healthcare Facilities**: Navigate hospitals and clinics
+3. **Shopping Malls**: Find stores and facilities
+4. **Museums**: Self-guided tours with location awareness
+5. **Emergency Evacuation**: Direct to nearest exits
+6. **Accessibility**: Assist visually impaired users
+
+## 🏗️ Technologies
+
+### Current Stack
+- **iOS**: Swift 5.9, SwiftUI
+- **Networking**: MultipeerConnectivity, Bonjour
+- **Backend**: Firebase Auth, Firestore
+- **Build**: Xcode 15, iOS 16+
+
+### Planned for v2.0
+- **UWB**: Nearby Interaction API
+- **AR**: ARKit for position fusion
+- **Backend**: Python Flask, NumPy
+- **Algorithms**: Trilateration, A* pathfinding
+
+## 📝 Known Issues & Solutions
+
+### Local Network Permission
+- iOS 18+ may not show permission prompt automatically
+- Solution: App includes LocalNetworkAuthorization service to force prompt
+- Check: Settings → Privacy → Local Network → VNXNavigationApp
+
+### Connection Timeouts
+- Ensure all devices on same WiFi network
+- Disable VPN if active
+- Check firewall settings
+
+## 🤝 Contributing
+
+This is a proof-of-concept for VALUENEX. For contributions:
+1. Fork the repository
+2. Create feature branch
+3. Commit changes with clear messages
+4. Push to branch
+5. Open pull request
+
+## 📄 License
 
 Proprietary - VALUENEX © 2024
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- Apple for Nearby Interaction API documentation
-- OpenAI for AI-assisted development
-- Supabase for authentication infrastructure
+- Apple for MultipeerConnectivity and Nearby Interaction frameworks
+- Firebase for authentication infrastructure
+- OpenAI Claude for development assistance
+- VALUENEX team for project vision and support

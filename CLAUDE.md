@@ -1,6 +1,5 @@
 - Look at the Apply Nearby Interaction Docs as necessary to build apps with navigation interaction across multiple devices. https://developer.apple.com/documentation/nearbyinteraction/
 - Best practices - make sure to push to github at the end of every change you make to the codebase, like at the end of every message you send me.
-Hello
 - Indoor navigation for people (acting as AI Robots/)
 People can download an app on their phone that trilaterates with 3-5 base stations that we (VALUENEX) set up
 Their phone’s edge computing calculates the trilateration between it and the base stations and then gives the person accurate directions on where to go in the conference across multiple floors, etc.
