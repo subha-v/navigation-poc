@@ -164,6 +164,8 @@ extension NISessionService: NISessionDelegate {
                 self.elevation = elevation
                 
                 print("📏 Distance: \(self.formatDistance()), Direction: \(self.formatDirection())")
+            } else if object.distance != nil {
+                print("📏 Distance: \(self.formatDistance()) (no direction yet)")
             }
         }
     }
