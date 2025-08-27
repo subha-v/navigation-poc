@@ -10,8 +10,8 @@
 	<string>This app needs to discover and connect to nearby phones on your local network for navigation.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_vnxnav-service._tcp</string>
-		<string>_vnxnav-service._udp</string>
+		<string>_vnx._tcp</string>
+		<string>_vnx._udp</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
