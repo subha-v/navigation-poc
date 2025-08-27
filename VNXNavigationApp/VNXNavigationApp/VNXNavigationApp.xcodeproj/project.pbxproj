@@ -18,6 +18,7 @@
 		17CE0FB32E5E8F390084259C /* AnchorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FB02E5E8F390084259C /* AnchorService.swift */; };
 		17CE0FB42E5E8F390084259C /* MultipeerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FB12E5E8F390084259C /* MultipeerService.swift */; };
 		17CE0FB52E5E8F390084259C /* NavigatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FB22E5E8F390084259C /* NavigatorService.swift */; };
+		17CE0FB72E5E950A0084259C /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FB62E5E950A0084259C /* LocalNetworkAuthorization.swift */; };
 		17E042842E57ED0E00468972 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427F2E57ED0E00468972 /* LoginView.swift */; };
 		17E042872E57ED0E00468972 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042782E57ED0E00468972 /* User.swift */; };
 		17E042892E57ED0E00468972 /* VNXNavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042732E57ED0E00468972 /* VNXNavigationApp.swift */; };
@@ -51,6 +52,7 @@
 		17CE0FB02E5E8F390084259C /* AnchorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorService.swift; sourceTree = "<group>"; };
 		17CE0FB12E5E8F390084259C /* MultipeerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipeerService.swift; sourceTree = "<group>"; };
 		17CE0FB22E5E8F390084259C /* NavigatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatorService.swift; sourceTree = "<group>"; };
+		17CE0FB62E5E950A0084259C /* LocalNetworkAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkAuthorization.swift; sourceTree = "<group>"; };
 		17E042462E57EC2B00468972 /* VNXNavigationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VNXNavigationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +169,7 @@
 		17E0427D2E57ED0E00468972 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				17CE0FB62E5E950A0084259C /* LocalNetworkAuthorization.swift */,
 				17CE0FB02E5E8F390084259C /* AnchorService.swift */,
 				17CE0FB12E5E8F390084259C /* MultipeerService.swift */,
 				17CE0FB22E5E8F390084259C /* NavigatorService.swift */,
@@ -363,6 +366,7 @@
 				1735F1D42E5E77860095DD02 /* HomeView.swift in Sources */,
 				17E042872E57ED0E00468972 /* User.swift in Sources */,
 				1735F1C22E5E73150095DD02 /* ForgotPasswordView.swift in Sources */,
+				17CE0FB72E5E950A0084259C /* LocalNetworkAuthorization.swift in Sources */,
 				17CE0FB32E5E8F390084259C /* AnchorService.swift in Sources */,
 				17CE0FB42E5E8F390084259C /* MultipeerService.swift in Sources */,
 				17CE0FB52E5E8F390084259C /* NavigatorService.swift in Sources */,
