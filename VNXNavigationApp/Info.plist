@@ -42,5 +42,12 @@
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app uses the local network to discover and connect with nearby anchor devices for navigation.</string>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_vnx._tcp</string>
+        <string>_vnx._udp</string>
+    </array>
 </dict>
 </plist>
