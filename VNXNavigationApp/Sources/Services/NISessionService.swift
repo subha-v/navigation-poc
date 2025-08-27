@@ -93,6 +93,8 @@ class NISessionService: NSObject, ObservableObject {
         }
         
         print("📍 Received peer token from \(peerID.displayName): \(preview)")
+        print("DEBUG: My NISession exists: \(niSession != nil)")
+        print("DEBUG: About to start ranging with peer's token")
         
         startRanging(with: token)
     }
@@ -106,11 +108,16 @@ class NISessionService: NSObject, ObservableObject {
         let config = NINearbyPeerConfiguration(peerToken: peerToken)
         
         print("DEBUG: About to run NI session")
+        print("DEBUG: Session exists: \(session)")
         print("DEBUG: Session delegate is set: \(session.delegate != nil)")
         print("DEBUG: My token exists: \(myDiscoveryToken != nil)")
         print("DEBUG: Peer token received: \(peerDiscoveryToken != nil)")
+        print("DEBUG: Config created with peer token")
         
         session.run(config)
+        
+        // Check if session is actually running
+        print("DEBUG: Called session.run(config)")
         
         DispatchQueue.main.async {
             self.isRunning = true
@@ -213,10 +220,17 @@ extension NISessionService: NISessionDelegate {
     }
     
     func session(_ session: NISession, didInvalidateWith error: Error) {
+        print("ERROR: NI session invalidated with error: \(error)")
+        print("ERROR: Error localized: \(error.localizedDescription)")
+        
+        if let nsError = error as NSError? {
+            print("ERROR: Error code: \(nsError.code)")
+            print("ERROR: Error domain: \(nsError.domain)")
+        }
+        
         DispatchQueue.main.async {
             self.isRunning = false
             self.connectionState = "Session error: \(error.localizedDescription)"
         }
-        print("❌ NI session invalidated: \(error)")
     }
 }
