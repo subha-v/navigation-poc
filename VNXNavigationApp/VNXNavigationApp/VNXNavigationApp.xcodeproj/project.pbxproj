@@ -23,6 +23,7 @@
 		17CE0FBB2E5F86B00084259C /* NISessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FB92E5F86B00084259C /* NISessionService.swift */; };
 		17CE0FBC2E5F8A000084259C /* ConnectedPeerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FBC2E5F8A000084259D /* ConnectedPeerRow.swift */; };
 		17CE0FBD2E5F8A000084259C /* DiscoveredAnchorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FBD2E5F8A000084259E /* DiscoveredAnchorRow.swift */; };
+		17CE0FBE2E5F8A010084259C /* NISessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FBE2E5F8A010084259F /* NISessionView.swift */; };
 		17E042842E57ED0E00468972 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427F2E57ED0E00468972 /* LoginView.swift */; };
 		17E042872E57ED0E00468972 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042782E57ED0E00468972 /* User.swift */; };
 		17E042892E57ED0E00468972 /* VNXNavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042732E57ED0E00468972 /* VNXNavigationApp.swift */; };
@@ -61,6 +62,7 @@
 		17CE0FB92E5F86B00084259C /* NISessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NISessionService.swift; sourceTree = "<group>"; };
 		17CE0FBC2E5F8A000084259D /* ConnectedPeerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerRow.swift; sourceTree = "<group>"; };
 		17CE0FBD2E5F8A000084259E /* DiscoveredAnchorRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveredAnchorRow.swift; sourceTree = "<group>"; };
+		17CE0FBE2E5F8A010084259F /* NISessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NISessionView.swift; sourceTree = "<group>"; };
 		17E042462E57EC2B00468972 /* VNXNavigationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VNXNavigationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -207,6 +209,7 @@
 			children = (
 				17CE0FBC2E5F8A000084259D /* ConnectedPeerRow.swift */,
 				17CE0FBD2E5F8A000084259E /* DiscoveredAnchorRow.swift */,
+				17CE0FBE2E5F8A010084259F /* NISessionView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 				17CE0FBB2E5F86B00084259C /* NISessionService.swift in Sources */,
 				17CE0FBC2E5F8A000084259C /* ConnectedPeerRow.swift in Sources */,
 				17CE0FBD2E5F8A000084259C /* DiscoveredAnchorRow.swift in Sources */,
+				17CE0FBE2E5F8A010084259C /* NISessionView.swift in Sources */,
 				17E042842E57ED0E00468972 /* LoginView.swift in Sources */,
 				1735F1D42E5E77860095DD02 /* HomeView.swift in Sources */,
 				17E042872E57ED0E00468972 /* User.swift in Sources */,
