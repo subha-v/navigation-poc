@@ -208,15 +208,30 @@ class NISessionService: NSObject, ObservableObject {
             NSLog("   - Direction Support: \(capabilities.supportsDirectionMeasurement ? "✅ YES" : "❌ NO")")
             NSLog("   - Precise Distance Support: \(capabilities.supportsPreciseDistanceMeasurement ? "✅ YES" : "❌ NO")")
             
+            // CRITICAL: Check if device actually supports direction
+            if !capabilities.supportsDirectionMeasurement {
+                NSLog("\n❌❌❌ CRITICAL: This device DOES NOT support direction measurements!")
+                NSLog("   Direction requires iPhone Pro models:")
+                NSLog("   ✅ iPhone 11 Pro/Pro Max or newer Pro models")
+                NSLog("   ❌ Regular iPhone 11/12/13/14/15 do NOT support direction")
+                NSLog("   You can only get DISTANCE, not DIRECTION on this device!")
+                
+                DispatchQueue.main.async {
+                    self.coachingMessage = "⚠️ Device doesn't support direction - Pro model required"
+                }
+            }
+            
             let canEnableCamera = capabilities.supportsCameraAssistance && cameraAuthStatus == .authorized
             config.isCameraAssistanceEnabled = canEnableCamera
             
             NSLog("\n🎯 CONFIGURATION RESULT:")
-            if canEnableCamera {
-                NSLog("   ✅✅✅ Camera assistance ENABLED - Direction SHOULD work!")
+            if canEnableCamera && capabilities.supportsDirectionMeasurement {
+                NSLog("   ✅✅✅ Camera assistance ENABLED - Direction WILL work!")
+            } else if canEnableCamera && !capabilities.supportsDirectionMeasurement {
+                NSLog("   ⚠️ Camera assistance enabled but device doesn't support direction")
+                NSLog("   Only DISTANCE will work, not DIRECTION")
             } else if !capabilities.supportsCameraAssistance {
                 NSLog("   ❌❌❌ Device CANNOT support camera assistance")
-                NSLog("   - Need iPhone 11 Pro/Pro Max or newer")
             } else if cameraAuthStatus != .authorized {
                 NSLog("   ❌❌❌ Camera assistance DISABLED - No camera permission!")
             }
