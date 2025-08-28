@@ -89,8 +89,20 @@ class NISessionService: NSObject, ObservableObject {
         // Check capabilities BEFORE creating session
         if #available(iOS 16.0, *) {
             NSLog("📱 PRE-SESSION DEVICE CHECK:")
-            NSLog("   - Device supports camera assistance: \(NISession.deviceCapabilities.supportsCameraAssistance)")
-            NSLog("   - Device supports direction: \(NISession.deviceCapabilities.supportsDirectionMeasurement)")
+            let caps = NISession.deviceCapabilities
+            NSLog("   - Device supports camera assistance: \(caps.supportsCameraAssistance)")
+            NSLog("   - Device supports direction: \(caps.supportsDirectionMeasurement)")
+            NSLog("   - Device supports precise distance: \(caps.supportsPreciseDistanceMeasurement)")
+            
+            // Log exact device model
+            var systemInfo = utsname()
+            uname(&systemInfo)
+            let modelCode = withUnsafePointer(to: &systemInfo.machine) {
+                $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+                    ptr in String(validatingUTF8: ptr)
+                }
+            }
+            NSLog("   - Device model code: \(modelCode ?? "Unknown")")
             
             // Check camera permission BEFORE session creation
             let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
