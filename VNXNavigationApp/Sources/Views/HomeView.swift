@@ -87,7 +87,7 @@ struct RoleSelectionView: View {
         guard let role = selectedRole else { return }
         // In a real app, you'd update this in Firebase
         // For now, we'll just update the local user
-        if var user = authService.currentUser {
+        if let user = authService.currentUser {
             authService.currentUser = User(
                 id: user.id,
                 email: user.email,

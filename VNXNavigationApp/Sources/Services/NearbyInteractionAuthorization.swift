@@ -9,10 +9,19 @@ class NearbyInteractionAuthorization: NSObject {
         self.completion = completion
         
         // Check if NI is supported on this device
-        guard NISession.isSupported else {
-            print("❌ Nearby Interaction is not supported on this device")
-            completion(false)
-            return
+        // Use new API for iOS 16+, fallback to deprecated for older versions
+        if #available(iOS 16.0, *) {
+            guard NISession.deviceCapabilities.supportsPreciseDistanceMeasurement else {
+                print("❌ Nearby Interaction is not supported on this device")
+                completion(false)
+                return
+            }
+        } else {
+            guard NISession.isSupported else {
+                print("❌ Nearby Interaction is not supported on this device")
+                completion(false)
+                return
+            }
         }
         
         // Create a dummy NISession to trigger the permission prompt

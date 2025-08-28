@@ -226,7 +226,7 @@ struct MCBrowserView: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: Context) -> MCBrowserViewController {
-        guard let peerID = service.peerID,
+        guard let _ = service.peerID,
               let session = service.session else {
             fatalError("PeerID and Session must be initialized")
         }

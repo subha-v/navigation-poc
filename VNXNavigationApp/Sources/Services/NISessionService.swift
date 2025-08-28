@@ -73,9 +73,17 @@ class NISessionService: NSObject, ObservableObject {
         NSLog("\n========== STARTING NI SESSION ==========")
         NSLog("🔍 DEVICE ROLE: I am \(peerID.displayName)")
         
-        guard NISession.isSupported else {
-            NSLog("❌ Cannot start NI session - not supported")
-            return nil
+        // Use new API for iOS 16+, fallback to deprecated for older versions
+        if #available(iOS 16.0, *) {
+            guard NISession.deviceCapabilities.supportsPreciseDistanceMeasurement else {
+                NSLog("❌ Cannot start NI session - not supported")
+                return nil
+            }
+        } else {
+            guard NISession.isSupported else {
+                NSLog("❌ Cannot start NI session - not supported")
+                return nil
+            }
         }
         
         // Check capabilities BEFORE creating session
@@ -366,12 +374,9 @@ extension NISessionService: NISessionDelegate {
             case .unknown:
                 NSLog("DELEGATE: verticalDirectionEstimate: UNKNOWN")
                 verticalEstimateStr = "Unknown"
-            case .outOfFieldOfView:
-                NSLog("DELEGATE: verticalDirectionEstimate: OUT OF FIELD OF VIEW")
-                verticalEstimateStr = "Out of View"
             @unknown default:
                 NSLog("DELEGATE: verticalDirectionEstimate: unhandled case")
-                verticalEstimateStr = "Unhandled"
+                verticalEstimateStr = "Unknown"
             }
             
             DispatchQueue.main.async {
