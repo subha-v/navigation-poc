@@ -70,13 +70,28 @@ class NISessionService: NSObject, ObservableObject {
     }
     
     func startSession(for peerID: MCPeerID) -> Data? {
+        NSLog("\n========== STARTING NI SESSION ==========")
+        NSLog("🔍 DEVICE ROLE: I am \(peerID.displayName)")
+        
         guard NISession.isSupported else {
             NSLog("❌ Cannot start NI session - not supported")
             return nil
         }
         
+        // Check capabilities BEFORE creating session
+        if #available(iOS 16.0, *) {
+            NSLog("📱 PRE-SESSION DEVICE CHECK:")
+            NSLog("   - Device supports camera assistance: \(NISession.deviceCapabilities.supportsCameraAssistance)")
+            NSLog("   - Device supports direction: \(NISession.deviceCapabilities.supportsDirectionMeasurement)")
+            
+            // Check camera permission BEFORE session creation
+            let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+            NSLog("   - Camera permission status: \(cameraStatus == .authorized ? "✅ AUTHORIZED" : "❌ NOT AUTHORIZED")")
+        }
+        
         niSession = NISession()
         niSession?.delegate = self
+        NSLog("✅ NISession created and delegate set")
         
         guard let token = niSession?.discoveryToken else {
             NSLog("❌ Failed to generate discovery token")
@@ -98,13 +113,19 @@ class NISessionService: NSObject, ObservableObject {
                 self.myToken = preview
                 self.connectionState = "Token generated, waiting for peer"
             }
-            NSLog("📍 Generated NI token: \(preview)")
+            NSLog("📍 TOKEN GENERATED:")
+            NSLog("   - Token preview: \(preview)")
+            NSLog("   - Token data size: \(data.count) bytes")
+            NSLog("   - My role: \(peerID.displayName.contains("nav") ? "NAVIGATOR" : "ANCHOR")")
         }
         
+        NSLog("========== SESSION STARTED ==========\n")
         return tokenData
     }
     
     func receivePeerToken(_ tokenData: Data, from peerID: MCPeerID) {
+        NSLog("\n========== RECEIVING PEER TOKEN ==========")
+        
         guard let token = try? NSKeyedUnarchiver.unarchivedObject(
             ofClass: NIDiscoveryToken.self,
             from: tokenData
@@ -122,91 +143,102 @@ class NISessionService: NSObject, ObservableObject {
             self.connectionState = "Tokens exchanged, starting ranging"
         }
         
-        NSLog("📍 Received peer token from \(peerID.displayName): \(preview)")
-        NSLog("   Token is from ANCHOR device: \(peerID.displayName.contains("anchor"))")
-        NSLog("DEBUG: My NISession exists: \(niSession != nil)")
-        NSLog("DEBUG: About to start ranging with peer's token")
-        
-        // Check anchor's capabilities if possible
-        NSLog("🔍 ANALYZING PEER TOKEN:")
+        NSLog("📍 TOKEN EXCHANGE DETAILS:")
+        NSLog("   - Received from: \(peerID.displayName)")
+        NSLog("   - Token preview: \(preview)")
         NSLog("   - Token data size: \(tokenData.count) bytes")
-        NSLog("   - My device role: \(peerID.displayName.contains("nav") ? "NAVIGATOR" : "ANCHOR")")
-        NSLog("   - Peer device role: \(peerID.displayName.contains("anchor") ? "ANCHOR" : "NAVIGATOR")")
+        
+        let myRole = currentPeerID?.displayName.contains("nav") == true ? "NAVIGATOR" : "ANCHOR"
+        let peerRole = peerID.displayName.contains("anchor") ? "ANCHOR" : "NAVIGATOR"
+        
+        NSLog("🎭 ROLE VERIFICATION:")
+        NSLog("   - MY role: \(myRole)")
+        NSLog("   - PEER role: \(peerRole)")
+        NSLog("   - NISession exists: \(niSession != nil)")
+        NSLog("   - NISession delegate set: \(niSession?.delegate != nil)")
+        
+        NSLog("========== END TOKEN EXCHANGE ==========\n")
         
         startRanging(with: token)
     }
     
     private func startRanging(with peerToken: NIDiscoveryToken) {
+        NSLog("\n========== STARTING RANGING ==========")
+        
         guard let session = niSession else {
-            NSLog("❌ No NI session available")
+            NSLog("❌ CRITICAL: No NI session available - cannot start ranging!")
             return
         }
         
         // Check camera permission status
         let cameraAuthStatus = AVCaptureDevice.authorizationStatus(for: .video)
-        NSLog("\n📷 CAMERA PERMISSION CHECK:")
+        NSLog("📷 CAMERA PERMISSION:")
         switch cameraAuthStatus {
         case .authorized:
-            NSLog("   ✅ Camera AUTHORIZED")
+            NSLog("   ✅ AUTHORIZED - Direction should work")
         case .denied:
-            NSLog("   ❌ Camera DENIED - Direction will NOT work!")
-            NSLog("   Go to Settings > Privacy > Camera > VNXNavigationApp")
+            NSLog("   ❌ DENIED - Direction will NOT work!")
+            NSLog("   ACTION REQUIRED: Settings > Privacy > Camera > VNXNavigationApp")
         case .restricted:
-            NSLog("   ❌ Camera RESTRICTED")
+            NSLog("   ❌ RESTRICTED - Direction will NOT work!")
         case .notDetermined:
-            NSLog("   ⚠️ Camera permission NOT DETERMINED")
-            // Request permission
+            NSLog("   ⚠️ NOT DETERMINED - Requesting permission...")
             AVCaptureDevice.requestAccess(for: .video) { granted in
-                NSLog("   Camera permission granted: \(granted)")
+                NSLog("   Camera permission result: \(granted ? "✅ GRANTED" : "❌ DENIED")")
             }
         @unknown default:
-            NSLog("   Unknown camera status")
+            NSLog("   ⚠️ Unknown camera status")
         }
         
         let config = NINearbyPeerConfiguration(peerToken: peerToken)
         
-        // Enable camera assistance if available (following NearbyInteractionDemo approach)
+        // Enable camera assistance if available
         if #available(iOS 16.0, *) {
             let capabilities = NISession.deviceCapabilities
-            NSLog("\n📱 DEVICE CAPABILITIES CHECK:")
-            NSLog("   - Supports Camera Assistance: \(capabilities.supportsCameraAssistance)")
-            NSLog("   - Supports Direction: \(capabilities.supportsDirectionMeasurement)")
-            NSLog("   - Supports Precise Distance: \(capabilities.supportsPreciseDistanceMeasurement)")
+            NSLog("\n🔬 DEVICE CAPABILITY ANALYSIS:")
+            NSLog("   - Camera Assistance Support: \(capabilities.supportsCameraAssistance ? "✅ YES" : "❌ NO")")
+            NSLog("   - Direction Support: \(capabilities.supportsDirectionMeasurement ? "✅ YES" : "❌ NO")")
+            NSLog("   - Precise Distance Support: \(capabilities.supportsPreciseDistanceMeasurement ? "✅ YES" : "❌ NO")")
             
-            if capabilities.supportsCameraAssistance && cameraAuthStatus == .authorized {
-                config.isCameraAssistanceEnabled = true
-                NSLog("   ✅ Camera assistance ENABLED for direction")
+            let canEnableCamera = capabilities.supportsCameraAssistance && cameraAuthStatus == .authorized
+            config.isCameraAssistanceEnabled = canEnableCamera
+            
+            NSLog("\n🎯 CONFIGURATION RESULT:")
+            if canEnableCamera {
+                NSLog("   ✅✅✅ Camera assistance ENABLED - Direction SHOULD work!")
             } else if !capabilities.supportsCameraAssistance {
-                NSLog("   ❌ Device does NOT support camera assistance")
+                NSLog("   ❌❌❌ Device CANNOT support camera assistance")
+                NSLog("   - Need iPhone 11 Pro/Pro Max or newer")
             } else if cameraAuthStatus != .authorized {
-                NSLog("   ❌ Camera assistance DISABLED (no permission)")
+                NSLog("   ❌❌❌ Camera assistance DISABLED - No camera permission!")
             }
+            
+            NSLog("   - config.isCameraAssistanceEnabled = \(config.isCameraAssistanceEnabled)")
         } else {
-            NSLog("   ⚠️ iOS 15 or below - camera assistance experimental")
+            NSLog("   ⚠️ iOS 15 or below - limited direction support")
         }
         
-        NSLog("\nDEBUG: Starting NI session")
-        NSLog("   Session exists: \(session)")
-        NSLog("   Session delegate set: \(session.delegate != nil)")
-        NSLog("   My token exists: \(myDiscoveryToken != nil)")
-        NSLog("   Peer token exists: \(peerDiscoveryToken != nil)")
-        NSLog("   Camera assistance enabled: \(config.isCameraAssistanceEnabled)")
+        NSLog("\n🚀 RUNNING SESSION:")
+        NSLog("   - Session object: \(session)")
+        NSLog("   - Delegate attached: \(session.delegate != nil)")
+        NSLog("   - My token exists: \(myDiscoveryToken != nil)")
+        NSLog("   - Peer token exists: \(peerDiscoveryToken != nil)")
+        NSLog("   - Configuration camera enabled: \(config.isCameraAssistanceEnabled)")
         
         // Save configuration for re-running after suspension
         currentConfiguration = config
         
+        // This is the critical call that starts ranging
         session.run(config)
         
-        // Check if session is actually running
-        NSLog("DEBUG: Called session.run(config)")
+        NSLog("   ✅ session.run(config) called")
         
         DispatchQueue.main.async {
             self.isRunning = true
             self.connectionState = "Ranging active"
         }
         
-        NSLog("DEBUG: NI session.run() called successfully")
-        NSLog("Started NI ranging with peer")
+        NSLog("========== RANGING STARTED ==========\n")
     }
     
     func stopSession() {
@@ -292,14 +324,18 @@ extension NISessionService: NISessionDelegate {
     }
     
     func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
-        NSLog("DELEGATE: NI session didUpdate called with \(nearbyObjects.count) objects")
+        NSLog("\n🔄 UPDATE RECEIVED - ANALYZING...")
+        NSLog("   Objects count: \(nearbyObjects.count)")
+        
         guard let object = nearbyObjects.first else { 
-            NSLog("DELEGATE: No nearby objects in update")
+            NSLog("   ❌ No nearby objects in update")
             return 
         }
         
-        NSLog("DELEGATE: Object has distance: \(object.distance != nil)")
-        NSLog("DELEGATE: Object has direction: \(object.direction != nil)")
+        // Diagnostic summary
+        NSLog("\n📊 MEASUREMENT STATUS:")
+        NSLog("   - Distance available: \(object.distance != nil ? "✅ YES (\(object.distance!) meters)" : "❌ NO")")
+        NSLog("   - Direction available: \(object.direction != nil ? "✅ YES" : "❌ NO")")
         
         // Check for horizontalAngle and verticalDirectionEstimate (iOS 16+)
         if #available(iOS 16.0, *) {
@@ -365,6 +401,18 @@ extension NISessionService: NISessionDelegate {
                 NSLog("   TIP: Point camera at peer and move device to enable direction")
             } else {
                 NSLog("MEASUREMENT: No distance or direction available yet")
+            }
+            
+            // DIAGNOSTIC SUMMARY
+            if object.distance != nil && object.direction == nil {
+                NSLog("\n⚠️ DIAGNOSIS: Distance works but NO direction!")
+                NSLog("   POSSIBLE CAUSES:")
+                NSLog("   1. Camera permission denied on THIS device")
+                NSLog("   2. Camera permission denied on PEER device")  
+                NSLog("   3. Device doesn't support camera assistance")
+                NSLog("   4. Camera assistance not enabled in config")
+                NSLog("   5. Need to move device for convergence")
+                NSLog("   CHECK: Both devices need camera permission!")
             }
         }
     }
