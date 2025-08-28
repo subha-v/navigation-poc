@@ -16,6 +16,8 @@ class NISessionService: NSObject, ObservableObject {
     @Published var direction: simd_float3?
     @Published var azimuth: Float?
     @Published var elevation: Float?
+    @Published var horizontalAngle: Float?  // iOS 16+ property
+    @Published var verticalEstimate: String = "Unknown"  // iOS 16+ property
     @Published var isRunning = false
     @Published var myToken: String = "Not generated"
     @Published var peerToken: String = "Not received"
@@ -121,8 +123,15 @@ class NISessionService: NSObject, ObservableObject {
         }
         
         NSLog("📍 Received peer token from \(peerID.displayName): \(preview)")
+        NSLog("   Token is from ANCHOR device: \(peerID.displayName.contains("anchor"))")
         NSLog("DEBUG: My NISession exists: \(niSession != nil)")
         NSLog("DEBUG: About to start ranging with peer's token")
+        
+        // Check anchor's capabilities if possible
+        NSLog("🔍 ANALYZING PEER TOKEN:")
+        NSLog("   - Token data size: \(tokenData.count) bytes")
+        NSLog("   - My device role: \(peerID.displayName.contains("nav") ? "NAVIGATOR" : "ANCHOR")")
+        NSLog("   - Peer device role: \(peerID.displayName.contains("anchor") ? "ANCHOR" : "NAVIGATOR")")
         
         startRanging(with: token)
     }
@@ -213,6 +222,8 @@ class NISessionService: NSObject, ObservableObject {
             self.direction = nil
             self.azimuth = nil
             self.elevation = nil
+            self.horizontalAngle = nil
+            self.verticalEstimate = "Unknown"
             self.isRunning = false
             self.myToken = "Not generated"
             self.peerToken = "Not received"
@@ -290,6 +301,48 @@ extension NISessionService: NISessionDelegate {
         NSLog("DELEGATE: Object has distance: \(object.distance != nil)")
         NSLog("DELEGATE: Object has direction: \(object.direction != nil)")
         
+        // Check for horizontalAngle and verticalDirectionEstimate (iOS 16+)
+        if #available(iOS 16.0, *) {
+            if let horizontalAngle = object.horizontalAngle {
+                let degrees = horizontalAngle * 180 / .pi
+                NSLog("DELEGATE: horizontalAngle available: \(horizontalAngle) rad (\(degrees)°)")
+                DispatchQueue.main.async {
+                    self.horizontalAngle = horizontalAngle
+                }
+            } else {
+                NSLog("DELEGATE: horizontalAngle: nil")
+                DispatchQueue.main.async {
+                    self.horizontalAngle = nil
+                }
+            }
+            
+            let verticalEstimateStr: String
+            switch object.verticalDirectionEstimate {
+            case .above:
+                NSLog("DELEGATE: verticalDirectionEstimate: ABOVE")
+                verticalEstimateStr = "Above ↑"
+            case .below:
+                NSLog("DELEGATE: verticalDirectionEstimate: BELOW")
+                verticalEstimateStr = "Below ↓"
+            case .same:
+                NSLog("DELEGATE: verticalDirectionEstimate: SAME level")
+                verticalEstimateStr = "Same Level →"
+            case .unknown:
+                NSLog("DELEGATE: verticalDirectionEstimate: UNKNOWN")
+                verticalEstimateStr = "Unknown"
+            case .outOfFieldOfView:
+                NSLog("DELEGATE: verticalDirectionEstimate: OUT OF FIELD OF VIEW")
+                verticalEstimateStr = "Out of View"
+            @unknown default:
+                NSLog("DELEGATE: verticalDirectionEstimate: unhandled case")
+                verticalEstimateStr = "Unhandled"
+            }
+            
+            DispatchQueue.main.async {
+                self.verticalEstimate = verticalEstimateStr
+            }
+        }
+        
         DispatchQueue.main.async {
             self.distance = object.distance
             
@@ -309,6 +362,7 @@ extension NISessionService: NISessionDelegate {
                 NSLog("   Direction vector: x=\(direction.x), y=\(direction.y), z=\(direction.z)")
             } else if object.distance != nil {
                 NSLog("MEASUREMENT: Distance: \(self.formatDistance()) (no direction yet)")
+                NSLog("   TIP: Point camera at peer and move device to enable direction")
             } else {
                 NSLog("MEASUREMENT: No distance or direction available yet")
             }

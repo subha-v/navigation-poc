@@ -83,20 +83,54 @@ struct NISessionView: View {
     
     @ViewBuilder
     private var directionRow: some View {
-        HStack {
-            Text("Direction:")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            
-            if niSessionService.direction != nil {
-                Text(niSessionService.formatDirection())
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.green)
-            } else {
-                Text("Point camera at peer")
+        VStack(alignment: .leading, spacing: 4) {
+            // Full direction vector if available
+            HStack {
+                Text("Direction:")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
+                
+                if niSessionService.direction != nil {
+                    Text(niSessionService.formatDirection())
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
+                } else {
+                    Text("Point camera at peer")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            // Horizontal angle (iOS 16+)
+            HStack {
+                Text("Horizontal:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                if let horizontalAngle = niSessionService.horizontalAngle {
+                    let degrees = horizontalAngle * 180 / .pi
+                    Text(String(format: "%.1f°", degrees))
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.blue)
+                } else {
+                    Text("Not available")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            // Vertical estimate (iOS 16+)
+            HStack {
+                Text("Vertical:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Text(niSessionService.verticalEstimate)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundColor(.orange)
             }
         }
     }
