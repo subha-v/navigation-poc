@@ -19,6 +19,16 @@ struct NISessionView: View {
                 
                 if niSessionService.isRunning {
                     distanceRow
+                    directionRow
+                }
+                
+                // Show coaching message if available
+                if !niSessionService.coachingMessage.isEmpty {
+                    Text(niSessionService.coachingMessage)
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                        .multilineTextAlignment(.leading)
+                        .padding(.top, 4)
                 }
             }
             .padding()
@@ -68,6 +78,26 @@ struct NISessionView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.blue)
+        }
+    }
+    
+    @ViewBuilder
+    private var directionRow: some View {
+        HStack {
+            Text("Direction:")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            if niSessionService.direction != nil {
+                Text(niSessionService.formatDirection())
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.green)
+            } else {
+                Text("Point camera at peer")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
         }
     }
 }
