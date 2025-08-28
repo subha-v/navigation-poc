@@ -2,6 +2,7 @@ import Foundation
 import NearbyInteraction
 import MultipeerConnectivity
 import Combine
+import AVFoundation
 
 struct TokenExchange: Codable {
     let type: String
@@ -36,39 +37,39 @@ class NISessionService: NSObject, ObservableObject {
         // Check iOS 16+ for better capability checking
         if #available(iOS 16.0, *) {
             guard NISession.deviceCapabilities.supportsPreciseDistanceMeasurement else {
-                print("❌ Nearby Interaction is not supported on this device")
-                print("   - Device may lack U1 chip (need iPhone 11+)")
-                print("   - Or UWB may be disabled in your region")
+                NSLog("❌ Nearby Interaction is not supported on this device")
+                NSLog("   - Device may lack U1 chip (need iPhone 11+)")
+                NSLog("   - Or UWB may be disabled in your region")
                 connectionState = "NI not supported on this device"
                 return
             }
             
-            print("✅ Device Capabilities:")
-            print("   - Precise Distance: \(NISession.deviceCapabilities.supportsPreciseDistanceMeasurement)")
-            print("   - Direction: \(NISession.deviceCapabilities.supportsDirectionMeasurement)")
-            print("   - Camera Assistance: \(NISession.deviceCapabilities.supportsCameraAssistance)")
+            NSLog("✅ Device Capabilities:")
+            NSLog("   - Precise Distance: \(NISession.deviceCapabilities.supportsPreciseDistanceMeasurement)")
+            NSLog("   - Direction: \(NISession.deviceCapabilities.supportsDirectionMeasurement)")
+            NSLog("   - Camera Assistance: \(NISession.deviceCapabilities.supportsCameraAssistance)")
         } else {
             guard NISession.isSupported else {
-                print("❌ Nearby Interaction is not supported on this device")
-                print("   - Device may lack U1 chip (need iPhone 11+)")
-                print("   - Or UWB may be disabled in your region")
+                NSLog("❌ Nearby Interaction is not supported on this device")
+                NSLog("   - Device may lack U1 chip (need iPhone 11+)")
+                NSLog("   - Or UWB may be disabled in your region")
                 connectionState = "NI not supported on this device"
                 return
             }
-            print("✅ Nearby Interaction is supported (iOS 15 or below)")
+            NSLog("✅ Nearby Interaction is supported (iOS 15 or below)")
         }
         
-        print("IMPORTANT: Check these settings on BOTH devices:")
-        print("   1. Settings → Privacy → Location Services → System Services → Networking & Wireless = ON")
-        print("   2. Settings → Privacy → Nearby Interactions → VNXNavigationApp = Allow")
-        print("   3. Settings → Bluetooth = ON")
-        print("   4. Settings → Privacy → Local Network → VNXNavigationApp = ON")
-        print("   5. Settings → Privacy → Camera → VNXNavigationApp = Allow (for direction)")
+        NSLog("IMPORTANT: Check these settings on BOTH devices:")
+        NSLog("   1. Settings → Privacy → Location Services → System Services → Networking & Wireless = ON")
+        NSLog("   2. Settings → Privacy → Nearby Interactions → VNXNavigationApp = Allow")
+        NSLog("   3. Settings → Bluetooth = ON")
+        NSLog("   4. Settings → Privacy → Local Network → VNXNavigationApp = ON")
+        NSLog("   5. Settings → Privacy → Camera → VNXNavigationApp = Allow (for direction)")
     }
     
     func startSession(for peerID: MCPeerID) -> Data? {
         guard NISession.isSupported else {
-            print("❌ Cannot start NI session - not supported")
+            NSLog("❌ Cannot start NI session - not supported")
             return nil
         }
         
@@ -76,7 +77,7 @@ class NISessionService: NSObject, ObservableObject {
         niSession?.delegate = self
         
         guard let token = niSession?.discoveryToken else {
-            print("❌ Failed to generate discovery token")
+            NSLog("❌ Failed to generate discovery token")
             return nil
         }
         
@@ -95,7 +96,7 @@ class NISessionService: NSObject, ObservableObject {
                 self.myToken = preview
                 self.connectionState = "Token generated, waiting for peer"
             }
-            print("📍 Generated NI token: \(preview)")
+            NSLog("📍 Generated NI token: \(preview)")
         }
         
         return tokenData
@@ -106,7 +107,7 @@ class NISessionService: NSObject, ObservableObject {
             ofClass: NIDiscoveryToken.self,
             from: tokenData
         ) else {
-            print("❌ Failed to decode peer token")
+            NSLog("❌ Failed to decode peer token")
             return
         }
         
@@ -119,37 +120,68 @@ class NISessionService: NSObject, ObservableObject {
             self.connectionState = "Tokens exchanged, starting ranging"
         }
         
-        print("📍 Received peer token from \(peerID.displayName): \(preview)")
-        print("DEBUG: My NISession exists: \(niSession != nil)")
-        print("DEBUG: About to start ranging with peer's token")
+        NSLog("📍 Received peer token from \(peerID.displayName): \(preview)")
+        NSLog("DEBUG: My NISession exists: \(niSession != nil)")
+        NSLog("DEBUG: About to start ranging with peer's token")
         
         startRanging(with: token)
     }
     
     private func startRanging(with peerToken: NIDiscoveryToken) {
         guard let session = niSession else {
-            print("❌ No NI session available")
+            NSLog("❌ No NI session available")
             return
+        }
+        
+        // Check camera permission status
+        let cameraAuthStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        NSLog("\n📷 CAMERA PERMISSION CHECK:")
+        switch cameraAuthStatus {
+        case .authorized:
+            NSLog("   ✅ Camera AUTHORIZED")
+        case .denied:
+            NSLog("   ❌ Camera DENIED - Direction will NOT work!")
+            NSLog("   Go to Settings > Privacy > Camera > VNXNavigationApp")
+        case .restricted:
+            NSLog("   ❌ Camera RESTRICTED")
+        case .notDetermined:
+            NSLog("   ⚠️ Camera permission NOT DETERMINED")
+            // Request permission
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                NSLog("   Camera permission granted: \(granted)")
+            }
+        @unknown default:
+            NSLog("   Unknown camera status")
         }
         
         let config = NINearbyPeerConfiguration(peerToken: peerToken)
         
         // Enable camera assistance if available (following NearbyInteractionDemo approach)
         if #available(iOS 16.0, *) {
-            if NISession.deviceCapabilities.supportsCameraAssistance {
+            let capabilities = NISession.deviceCapabilities
+            NSLog("\n📱 DEVICE CAPABILITIES CHECK:")
+            NSLog("   - Supports Camera Assistance: \(capabilities.supportsCameraAssistance)")
+            NSLog("   - Supports Direction: \(capabilities.supportsDirectionMeasurement)")
+            NSLog("   - Supports Precise Distance: \(capabilities.supportsPreciseDistanceMeasurement)")
+            
+            if capabilities.supportsCameraAssistance && cameraAuthStatus == .authorized {
                 config.isCameraAssistanceEnabled = true
-                print("✅ Camera assistance ENABLED for direction measurements")
-            } else {
-                print("⚠️ Camera assistance NOT supported on this device")
+                NSLog("   ✅ Camera assistance ENABLED for direction")
+            } else if !capabilities.supportsCameraAssistance {
+                NSLog("   ❌ Device does NOT support camera assistance")
+            } else if cameraAuthStatus != .authorized {
+                NSLog("   ❌ Camera assistance DISABLED (no permission)")
             }
+        } else {
+            NSLog("   ⚠️ iOS 15 or below - camera assistance experimental")
         }
         
-        print("DEBUG: About to run NI session")
-        print("DEBUG: Session exists: \(session)")
-        print("DEBUG: Session delegate is set: \(session.delegate != nil)")
-        print("DEBUG: My token exists: \(myDiscoveryToken != nil)")
-        print("DEBUG: Peer token received: \(peerDiscoveryToken != nil)")
-        print("DEBUG: Camera assistance enabled: \(config.isCameraAssistanceEnabled)")
+        NSLog("\nDEBUG: Starting NI session")
+        NSLog("   Session exists: \(session)")
+        NSLog("   Session delegate set: \(session.delegate != nil)")
+        NSLog("   My token exists: \(myDiscoveryToken != nil)")
+        NSLog("   Peer token exists: \(peerDiscoveryToken != nil)")
+        NSLog("   Camera assistance enabled: \(config.isCameraAssistanceEnabled)")
         
         // Save configuration for re-running after suspension
         currentConfiguration = config
@@ -157,15 +189,15 @@ class NISessionService: NSObject, ObservableObject {
         session.run(config)
         
         // Check if session is actually running
-        print("DEBUG: Called session.run(config)")
+        NSLog("DEBUG: Called session.run(config)")
         
         DispatchQueue.main.async {
             self.isRunning = true
             self.connectionState = "Ranging active"
         }
         
-        print("DEBUG: NI session.run() called successfully")
-        print("Started NI ranging with peer")
+        NSLog("DEBUG: NI session.run() called successfully")
+        NSLog("Started NI ranging with peer")
     }
     
     func stopSession() {
@@ -187,7 +219,7 @@ class NISessionService: NSObject, ObservableObject {
             self.connectionState = "Not connected"
         }
         
-        print("🛑 Stopped NI session")
+        NSLog("🛑 Stopped NI session")
     }
     
     func formatDistance() -> String {
@@ -249,14 +281,14 @@ extension NISessionService: NISessionDelegate {
     }
     
     func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
-        print("DELEGATE: NI session didUpdate called with \(nearbyObjects.count) objects")
+        NSLog("DELEGATE: NI session didUpdate called with \(nearbyObjects.count) objects")
         guard let object = nearbyObjects.first else { 
-            print("DELEGATE: No nearby objects in update")
+            NSLog("DELEGATE: No nearby objects in update")
             return 
         }
         
-        print("DELEGATE: Object has distance: \(object.distance != nil)")
-        print("DELEGATE: Object has direction: \(object.direction != nil)")
+        NSLog("DELEGATE: Object has distance: \(object.distance != nil)")
+        NSLog("DELEGATE: Object has direction: \(object.direction != nil)")
         
         DispatchQueue.main.async {
             self.distance = object.distance
@@ -273,12 +305,12 @@ extension NISessionService: NISessionDelegate {
                 self.azimuth = azimuth
                 self.elevation = elevation
                 
-                print("MEASUREMENT: Distance: \(self.formatDistance()), Direction: \(self.formatDirection())")
-                print("   Direction vector: x=\(direction.x), y=\(direction.y), z=\(direction.z)")
+                NSLog("MEASUREMENT: Distance: \(self.formatDistance()), Direction: \(self.formatDirection())")
+                NSLog("   Direction vector: x=\(direction.x), y=\(direction.y), z=\(direction.z)")
             } else if object.distance != nil {
-                print("MEASUREMENT: Distance: \(self.formatDistance()) (no direction yet)")
+                NSLog("MEASUREMENT: Distance: \(self.formatDistance()) (no direction yet)")
             } else {
-                print("MEASUREMENT: No distance or direction available yet")
+                NSLog("MEASUREMENT: No distance or direction available yet")
             }
         }
     }
@@ -290,7 +322,7 @@ extension NISessionService: NISessionDelegate {
             self.connectionState = "Peer lost: \(reason)"
         }
         
-        print("❌ Lost peer: \(reason)")
+        NSLog("❌ Lost peer: \(reason)")
     }
     
     func sessionWasSuspended(_ session: NISession) {
@@ -298,7 +330,7 @@ extension NISessionService: NISessionDelegate {
             self.isRunning = false
             self.connectionState = "Session suspended"
         }
-        print("⏸️ NI session suspended")
+        NSLog("⏸️ NI session suspended")
     }
     
     func sessionSuspensionEnded(_ session: NISession) {
@@ -310,19 +342,19 @@ extension NISessionService: NISessionDelegate {
         // Re-run configuration after suspension (following NearbyInteractionDemo approach)
         if let config = currentConfiguration {
             session.run(config)
-            print("▶️ NI session resumed - re-running configuration")
+            NSLog("▶️ NI session resumed - re-running configuration")
         } else {
-            print("▶️ NI session resumed - no configuration to re-run")
+            NSLog("▶️ NI session resumed - no configuration to re-run")
         }
     }
     
     func session(_ session: NISession, didInvalidateWith error: Error) {
-        print("ERROR: NI session invalidated with error: \(error)")
-        print("ERROR: Error localized: \(error.localizedDescription)")
+        NSLog("ERROR: NI session invalidated with error: \(error)")
+        NSLog("ERROR: Error localized: \(error.localizedDescription)")
         
         if let nsError = error as NSError? {
-            print("ERROR: Error code: \(nsError.code)")
-            print("ERROR: Error domain: \(nsError.domain)")
+            NSLog("ERROR: Error code: \(nsError.code)")
+            NSLog("ERROR: Error domain: \(nsError.domain)")
         }
         
         DispatchQueue.main.async {
