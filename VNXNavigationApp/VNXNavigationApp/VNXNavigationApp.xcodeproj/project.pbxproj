@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		058B8C05467A4AA314DAD198 /* VNXNavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89D26CE128FE140AA622315 /* VNXNavigationApp.swift */; };
 		1735F1C22E5E73150095DD02 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1C02E5E73150095DD02 /* ForgotPasswordView.swift */; };
 		1735F1C32E5E73150095DD02 /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1C12E5E73150095DD02 /* SignupView.swift */; };
 		1735F1D22E5E777E0095DD02 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1D12E5E777E0095DD02 /* AuthService.swift */; };
 		1735F1D42E5E77860095DD02 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1D32E5E77860095DD02 /* HomeView.swift */; };
 		176B2A732E622CA50061A1D5 /* ArrowIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176B2A712E622CA50061A1D5 /* ArrowIndicatorView.swift */; };
 		176B2A742E622CA50061A1D5 /* DirectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176B2A722E622CA50061A1D5 /* DirectionDetailView.swift */; };
+		176B2A792E622EBF0061A1D5 /* MathUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176B2A772E622EBF0061A1D5 /* MathUtilities.swift */; };
 		17CE0F7C2E5E789E0084259C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 17CE0F7B2E5E789E0084259C /* FirebaseAuth */; };
 		17CE0F7E2E5E789E0084259C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 17CE0F7D2E5E789E0084259C /* FirebaseFirestore */; };
 		17CE0FAE2E5E8F310084259C /* AnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FAC2E5E8F310084259C /* AnchorView.swift */; };
@@ -28,7 +30,6 @@
 		17CE0FBE2E5F8A010084259C /* NISessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FBE2E5F8A010084259F /* NISessionView.swift */; };
 		17E042842E57ED0E00468972 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0427F2E57ED0E00468972 /* LoginView.swift */; };
 		17E042872E57ED0E00468972 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042782E57ED0E00468972 /* User.swift */; };
-		17E042892E57ED0E00468972 /* VNXNavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E042732E57ED0E00468972 /* VNXNavigationApp.swift */; };
 		17E042942E57EF2C00468972 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17E042932E57EF2C00468972 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		1735F1D32E5E77860095DD02 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		176B2A712E622CA50061A1D5 /* ArrowIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowIndicatorView.swift; sourceTree = "<group>"; };
 		176B2A722E622CA50061A1D5 /* DirectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionDetailView.swift; sourceTree = "<group>"; };
+		176B2A772E622EBF0061A1D5 /* MathUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtilities.swift; sourceTree = "<group>"; };
 		17CE0FAC2E5E8F310084259C /* AnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorView.swift; sourceTree = "<group>"; };
 		17CE0FAD2E5E8F310084259C /* NavigatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatorView.swift; sourceTree = "<group>"; };
 		17CE0FB02E5E8F390084259C /* AnchorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorService.swift; sourceTree = "<group>"; };
@@ -70,10 +72,10 @@
 		17E042462E57EC2B00468972 /* VNXNavigationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VNXNavigationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VNXNavigationAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		17E042732E57ED0E00468972 /* VNXNavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VNXNavigationApp.swift; sourceTree = "<group>"; };
 		17E042782E57ED0E00468972 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		17E0427F2E57ED0E00468972 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		17E042932E57EF2C00468972 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D89D26CE128FE140AA622315 /* VNXNavigationApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VNXNavigationApp.swift; path = VNXNavigationApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -97,11 +99,15 @@
 		};
 		17E042592E57EC2C00468972 /* VNXNavigationAppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = VNXNavigationAppTests;
 			sourceTree = "<group>";
 		};
 		17E042632E57EC2C00468972 /* VNXNavigationAppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = VNXNavigationAppUITests;
 			sourceTree = "<group>";
 		};
@@ -134,6 +140,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		176B2A782E622EBF0061A1D5 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				176B2A772E622EBF0061A1D5 /* MathUtilities.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		17CE0FBE2E5F8A100084259C /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,7 +186,7 @@
 		17E042742E57ED0E00468972 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				17E042732E57ED0E00468972 /* VNXNavigationApp.swift */,
+				D89D26CE128FE140AA622315 /* VNXNavigationApp.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -223,6 +237,7 @@
 		17E042832E57ED0E00468972 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				176B2A782E622EBF0061A1D5 /* Utilities */,
 				17E042742E57ED0E00468972 /* App */,
 				17E042772E57ED0E00468972 /* Config */,
 				17E042792E57ED0E00468972 /* Models */,
@@ -284,8 +299,6 @@
 				17E042592E57EC2C00468972 /* VNXNavigationAppTests */,
 			);
 			name = VNXNavigationAppTests;
-			packageProductDependencies = (
-			);
 			productName = VNXNavigationAppTests;
 			productReference = 17E042562E57EC2C00468972 /* VNXNavigationAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -307,8 +320,6 @@
 				17E042632E57EC2C00468972 /* VNXNavigationAppUITests */,
 			);
 			name = VNXNavigationAppUITests;
-			packageProductDependencies = (
-			);
 			productName = VNXNavigationAppUITests;
 			productReference = 17E042602E57EC2C00468972 /* VNXNavigationAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -395,6 +406,7 @@
 				17CE0FBB2E5F86B00084259C /* NISessionService.swift in Sources */,
 				17CE0FBC2E5F8A000084259C /* ConnectedPeerRow.swift in Sources */,
 				17CE0FBD2E5F8A000084259C /* DiscoveredAnchorRow.swift in Sources */,
+				176B2A792E622EBF0061A1D5 /* MathUtilities.swift in Sources */,
 				176B2A732E622CA50061A1D5 /* ArrowIndicatorView.swift in Sources */,
 				176B2A742E622CA50061A1D5 /* DirectionDetailView.swift in Sources */,
 				17CE0FBE2E5F8A010084259C /* NISessionView.swift in Sources */,
@@ -410,7 +422,7 @@
 				17CE0FAE2E5E8F310084259C /* AnchorView.swift in Sources */,
 				17CE0FAF2E5E8F310084259C /* NavigatorView.swift in Sources */,
 				1735F1C32E5E73150095DD02 /* SignupView.swift in Sources */,
-				17E042892E57ED0E00468972 /* VNXNavigationApp.swift in Sources */,
+				058B8C05467A4AA314DAD198 /* VNXNavigationApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

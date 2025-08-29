@@ -145,7 +145,7 @@ struct NavigatorView: View {
                             azimuth: navigatorService.niSessionService.azimuth,
                             distance: navigatorService.niSessionService.distance
                         )
-                        .padding(.top)
+                        .padding()
                         
                         // Direction details
                         DirectionDetailView(

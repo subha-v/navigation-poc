@@ -6,20 +6,6 @@ import AVFoundation
 import UIKit
 import simd
 
-// TEMPORARY: Inline definitions until MathUtilities.swift is added to Xcode project
-// These are duplicated from MathUtilities.swift
-public enum DistanceDirectionState {
-    case closeUpInFOV
-    case notCloseUpInFOV
-    case outOfFOV
-    case unknown
-}
-
-extension FloatingPoint {
-    var degreesToRadians: Self { self * .pi / 180 }
-    var radiansToDegrees: Self { self * 180 / .pi }
-}
-
 struct TokenExchange: Codable {
     let type: String
     let token: Data
