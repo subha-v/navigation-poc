@@ -2,9 +2,9 @@
 
 A proof-of-concept indoor navigation system for conferences and large venues, enabling precise indoor positioning and navigation using smartphone technology.
 
-**Last Updated**: August 27, 2024  
-**Current Version**: 2.0 (Nearby Interaction - WORKING)  
-**Status**: ✅ Distance measurements between devices functional
+**Last Updated**: August 29, 2024  
+**Current Version**: 2.1 (NIPeekaboo-style UI for Navigator)  
+**Status**: ✅ Distance measurements between devices functional with enhanced UI
 
 ## 🎯 Project Vision
 
@@ -56,16 +56,67 @@ VNXNavigationApp/
 │   │   ├── MultipeerService.swift
 │   │   ├── AnchorService.swift
 │   │   ├── NavigatorService.swift
+│   │   ├── NISessionService.swift
+│   │   ├── NearbyInteractionAuthorization.swift
 │   │   └── LocalNetworkAuthorization.swift
+│   ├── Utilities/            # Helper utilities
+│   │   └── MathUtilities.swift
 │   └── Views/                # SwiftUI views
 │       ├── LoginView.swift
 │       ├── SignupView.swift
 │       ├── HomeView.swift
 │       ├── AnchorView.swift
-│       └── NavigatorView.swift
+│       ├── NavigatorView.swift
+│       └── Components/
+│           ├── ArrowIndicatorView.swift
+│           ├── DirectionDetailView.swift
+│           ├── NISessionView.swift
+│           ├── ConnectedPeerRow.swift
+│           └── DiscoveredAnchorRow.swift
 ├── Info.plist               # App permissions
 └── GoogleService-Info.plist # Firebase configuration
 ```
+
+## 🎨 Enhanced Navigator UI (v2.1) - NEW!
+
+### NIPeekaboo-Inspired Interface
+The Navigator phone now features an enhanced UI inspired by Apple's NIPeekaboo demo:
+
+#### Visual Components
+- **Arrow Indicator**: A large, rotating arrow graphic that points toward the anchor phone
+  - Green when close (< 0.3m)
+  - Blue at medium distance
+  - Orange when far or out of field-of-view
+- **Direction Details**: Real-time display of:
+  - Distance in meters with color coding
+  - Horizontal angle (azimuth) with left/right arrows
+  - Vertical angle (elevation) with up/down arrows
+  - iOS 16+ vertical position estimate (above/below/same level)
+- **State Visualization**: Clear visual feedback for different states:
+  - `closeUpInFOV`: Arrow green with subtle pulse animation
+  - `notCloseUpInFOV`: Arrow blue, full opacity
+  - `outOfFOV`: Arrow orange, semi-transparent
+  - `unknown`: Arrow hidden, "Searching..." message
+- **Haptic Feedback**: Subtle vibration when transitioning to close proximity
+
+#### Implementation Notes
+- **Anchor UI**: Remains unchanged - maintains current simple interface
+- **Navigator UI**: Complete overhaul with smooth animations and transitions
+- **Math Utilities**: Added azimuth/elevation calculations matching NIPeekaboo
+- **Distance States**: Implements same state machine as reference app
+
+### 📝 Adding New Files to Xcode
+After pulling the latest changes, you need to add the new files to your Xcode project:
+
+1. Open `VNXNavigationApp.xcodeproj` in Xcode
+2. Right-click on the appropriate group in the project navigator
+3. Select "Add Files to VNXNavigationApp..."
+4. Add these new files:
+   - `Sources/Utilities/MathUtilities.swift`
+   - `Sources/Views/Components/ArrowIndicatorView.swift`
+   - `Sources/Views/Components/DirectionDetailView.swift`
+5. Ensure "Copy items if needed" is unchecked (files already exist)
+6. Build and run the project
 
 ## 🎉 Nearby Interaction Implementation (v2.0) - WORKING!
 

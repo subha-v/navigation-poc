@@ -3,6 +3,8 @@ import NearbyInteraction
 import MultipeerConnectivity
 import Combine
 import AVFoundation
+import UIKit
+import simd
 
 struct TokenExchange: Codable {
     let type: String
@@ -23,12 +25,17 @@ class NISessionService: NSObject, ObservableObject {
     @Published var peerToken: String = "Not received"
     @Published var connectionState = "Not connected"
     @Published var coachingMessage = ""
+    @Published var currentDistanceDirectionState: DistanceDirectionState = .unknown
     
     private var niSession: NISession?
     private var myDiscoveryToken: NIDiscoveryToken?
     private var peerDiscoveryToken: NIDiscoveryToken?
     private var currentPeerID: MCPeerID?
     private var currentConfiguration: NINearbyPeerConfiguration?
+    private let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
+    
+    // Distance threshold for "nearby" (matching NIPeekaboo)
+    private let nearbyDistanceThreshold: Float = 0.3
     
     override init() {
         super.init()
@@ -311,6 +318,35 @@ class NISessionService: NSObject, ObservableObject {
         let elevationDegrees = elevation * 180 / .pi
         return String(format: "Az: %.0f° El: %.0f°", azimuthDegrees, elevationDegrees)
     }
+    
+    // Helper methods matching NIPeekaboo behavior
+    private func isNearby(_ distance: Float) -> Bool {
+        return distance < nearbyDistanceThreshold
+    }
+    
+    private func isPointingAt(_ angleRad: Float) -> Bool {
+        // Consider the range -15 to +15 degrees to be "pointing at"
+        return abs(angleRad.radiansToDegrees) <= 15
+    }
+    
+    private func getDistanceDirectionState(from nearbyObject: NINearbyObject) -> DistanceDirectionState {
+        if nearbyObject.distance == nil && nearbyObject.direction == nil {
+            return .unknown
+        }
+        
+        let isNearby = nearbyObject.distance.map(isNearby(_:)) ?? false
+        let directionAvailable = nearbyObject.direction != nil
+        
+        if isNearby && directionAvailable {
+            return .closeUpInFOV
+        }
+        
+        if !isNearby && directionAvailable {
+            return .notCloseUpInFOV
+        }
+        
+        return .outOfFOV
+    }
 }
 
 extension NISessionService: NISessionDelegate {
@@ -367,6 +403,15 @@ extension NISessionService: NISessionDelegate {
             return 
         }
         
+        // Calculate the new state
+        let previousState = currentDistanceDirectionState
+        let nextState = getDistanceDirectionState(from: object)
+        
+        // Trigger haptic feedback on state change (matching NIPeekaboo)
+        if previousState == .notCloseUpInFOV && nextState == .closeUpInFOV || previousState == .unknown {
+            impactGenerator.impactOccurred()
+        }
+        
         // Diagnostic summary
         NSLog("\n📊 MEASUREMENT STATUS:")
         NSLog("   - Distance available: \(object.distance != nil ? "✅ YES (\(object.distance!) meters)" : "❌ NO")")
@@ -413,6 +458,7 @@ extension NISessionService: NISessionDelegate {
         
         DispatchQueue.main.async {
             self.distance = object.distance
+            self.currentDistanceDirectionState = nextState
             
             if let direction = object.direction {
                 self.direction = direction
@@ -428,9 +474,11 @@ extension NISessionService: NISessionDelegate {
                 
                 NSLog("MEASUREMENT: Distance: \(self.formatDistance()), Direction: \(self.formatDirection())")
                 NSLog("   Direction vector: x=\(direction.x), y=\(direction.y), z=\(direction.z)")
+                NSLog("   State: \(nextState)")
             } else if object.distance != nil {
                 NSLog("MEASUREMENT: Distance: \(self.formatDistance()) (no direction yet)")
                 NSLog("   TIP: Point camera at peer and move device to enable direction")
+                NSLog("   State: \(nextState)")
             } else {
                 NSLog("MEASUREMENT: No distance or direction available yet")
             }

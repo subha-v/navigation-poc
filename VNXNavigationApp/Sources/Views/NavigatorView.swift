@@ -135,15 +135,40 @@ struct NavigatorView: View {
                     }
                 }
                 
+                // Show NI Session UI if connected to an anchor
                 if let selected = selectedAnchor,
                    isConnectedToAnchor(selected) {
-                    NISessionView(
-                        anchor: selected,
-                        niSessionService: navigatorService.niSessionService,
-                        onStartSession: {
-                            navigatorService.startNISession(with: selected)
+                    VStack(spacing: 20) {
+                        // Arrow indicator showing direction to anchor
+                        ArrowIndicatorView(
+                            state: navigatorService.niSessionService.currentDistanceDirectionState,
+                            azimuth: navigatorService.niSessionService.azimuth,
+                            distance: navigatorService.niSessionService.distance
+                        )
+                        .padding(.top)
+                        
+                        // Direction details
+                        DirectionDetailView(
+                            niSessionService: navigatorService.niSessionService,
+                            anchorName: selected.displayName
+                        )
+                        .padding(.horizontal)
+                        
+                        // Start session button if not running
+                        if !navigatorService.niSessionService.isRunning {
+                            Button(action: {
+                                navigatorService.startNISession(with: selected)
+                            }) {
+                                Label("Start Navigation", systemImage: "location.fill")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                            .padding(.horizontal)
                         }
-                    )
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: navigatorService.niSessionService.currentDistanceDirectionState)
                 }
                 
                 Spacer()
