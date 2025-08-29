@@ -11,6 +11,8 @@
 		1735F1C32E5E73150095DD02 /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1C12E5E73150095DD02 /* SignupView.swift */; };
 		1735F1D22E5E777E0095DD02 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1D12E5E777E0095DD02 /* AuthService.swift */; };
 		1735F1D42E5E77860095DD02 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1735F1D32E5E77860095DD02 /* HomeView.swift */; };
+		176B2A732E622CA50061A1D5 /* ArrowIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176B2A712E622CA50061A1D5 /* ArrowIndicatorView.swift */; };
+		176B2A742E622CA50061A1D5 /* DirectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176B2A722E622CA50061A1D5 /* DirectionDetailView.swift */; };
 		17CE0F7C2E5E789E0084259C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 17CE0F7B2E5E789E0084259C /* FirebaseAuth */; };
 		17CE0F7E2E5E789E0084259C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 17CE0F7D2E5E789E0084259C /* FirebaseFirestore */; };
 		17CE0FAE2E5E8F310084259C /* AnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17CE0FAC2E5E8F310084259C /* AnchorView.swift */; };
@@ -52,6 +54,8 @@
 		1735F1C12E5E73150095DD02 /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
 		1735F1D12E5E777E0095DD02 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		1735F1D32E5E77860095DD02 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		176B2A712E622CA50061A1D5 /* ArrowIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowIndicatorView.swift; sourceTree = "<group>"; };
+		176B2A722E622CA50061A1D5 /* DirectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionDetailView.swift; sourceTree = "<group>"; };
 		17CE0FAC2E5E8F310084259C /* AnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorView.swift; sourceTree = "<group>"; };
 		17CE0FAD2E5E8F310084259C /* NavigatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatorView.swift; sourceTree = "<group>"; };
 		17CE0FB02E5E8F390084259C /* AnchorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorService.swift; sourceTree = "<group>"; };
@@ -130,6 +134,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17CE0FBE2E5F8A100084259C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				176B2A712E622CA50061A1D5 /* ArrowIndicatorView.swift */,
+				176B2A722E622CA50061A1D5 /* DirectionDetailView.swift */,
+				17CE0FBC2E5F8A000084259D /* ConnectedPeerRow.swift */,
+				17CE0FBD2E5F8A000084259E /* DiscoveredAnchorRow.swift */,
+				17CE0FBE2E5F8A010084259F /* NISessionView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		17E0423D2E57EC2B00468972 = {
 			isa = PBXGroup;
 			children = (
@@ -202,16 +218,6 @@
 				17E0427F2E57ED0E00468972 /* LoginView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		17CE0FBE2E5F8A100084259C /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				17CE0FBC2E5F8A000084259D /* ConnectedPeerRow.swift */,
-				17CE0FBD2E5F8A000084259E /* DiscoveredAnchorRow.swift */,
-				17CE0FBE2E5F8A010084259F /* NISessionView.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		17E042832E57ED0E00468972 /* Sources */ = {
@@ -389,6 +395,8 @@
 				17CE0FBB2E5F86B00084259C /* NISessionService.swift in Sources */,
 				17CE0FBC2E5F8A000084259C /* ConnectedPeerRow.swift in Sources */,
 				17CE0FBD2E5F8A000084259C /* DiscoveredAnchorRow.swift in Sources */,
+				176B2A732E622CA50061A1D5 /* ArrowIndicatorView.swift in Sources */,
+				176B2A742E622CA50061A1D5 /* DirectionDetailView.swift in Sources */,
 				17CE0FBE2E5F8A010084259C /* NISessionView.swift in Sources */,
 				17E042842E57ED0E00468972 /* LoginView.swift in Sources */,
 				1735F1D42E5E77860095DD02 /* HomeView.swift in Sources */,
